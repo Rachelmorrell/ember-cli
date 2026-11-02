@@ -4,15 +4,14 @@ const ember = require('../helpers/ember');
 const fs = require('fs-extra');
 const path = require('path');
 let root = process.cwd();
-let tmproot = path.join(root, 'tmp');
-const mkTmpDirIn = require('../../lib/utilities/mk-tmp-dir-in');
+const tmp = require('tmp-promise');
 
-const Blueprint = require('../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const BlueprintNpmTask = require('ember-cli-internal-test-helpers/lib/helpers/disable-npm-on-blueprint');
 
-const chai = require('../chai');
-let expect = chai.expect;
-let file = chai.file;
+const { expect } = require('chai');
+const { file } = require('chai-files');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 
 describe('Acceptance: ember destroy', function () {
   this.timeout(60000);
@@ -27,17 +26,17 @@ describe('Acceptance: ember destroy', function () {
   });
 
   beforeEach(async function () {
-    tmpdir = await mkTmpDirIn(tmproot);
-    process.chdir(tmpdir);
+    const { path } = await tmp.dir();
+    tmpdir = path;
+    process.chdir(path);
   });
 
   afterEach(function () {
     process.chdir(root);
-    return fs.remove(tmproot);
   });
 
   function initApp() {
-    return ember(['init', '--name=my-app', '--skip-npm', '--skip-bower']);
+    return ember(['init', '--name=my-app', '--skip-npm']);
   }
 
   function generate(args) {
@@ -88,15 +87,54 @@ describe('Acceptance: ember destroy', function () {
   });
 
   it('http-mock foo', function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     let commandArgs = ['http-mock', 'foo'];
     let files = ['server/mocks/foo.js'];
 
     return assertDestroyAfterGenerate(commandArgs, files);
   });
 
+  it('http-mock throws', async function () {
+    if (isExperimentEnabled('VITE')) {
+      let commandArgs = ['http-mock', 'foo'];
+      let files = ['server/mocks/foo.js'];
+
+      await expect(assertDestroyAfterGenerate(commandArgs, files)).to.be.rejectedWith(
+        'The http-mock blueprint is not supported in Vite projects'
+      );
+    }
+  });
+
   it('http-proxy foo', function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     let commandArgs = ['http-proxy', 'foo', 'bar'];
     let files = ['server/proxies/foo.js'];
+
+    return assertDestroyAfterGenerate(commandArgs, files);
+  });
+
+  it('http-proxy throws', async function () {
+    if (isExperimentEnabled('VITE')) {
+      let commandArgs = ['http-proxy', 'foo', 'bar'];
+      let files = ['server/proxies/foo.js'];
+
+      await expect(assertDestroyAfterGenerate(commandArgs, files)).to.be.rejectedWith(
+        'The http-proxy blueprint is not supported in Vite projects'
+      );
+    }
+  });
+
+  it('deletes files generated using blueprint paths', async function () {
+    await fs.outputFile('path/to/blueprints/foo/files/foo/__name__.js', "console.log('bar');\n");
+
+    let commandArgs = [path.join('path', 'to', 'blueprints', 'foo'), 'bar'];
+    let files = ['foo/bar.js'];
 
     return assertDestroyAfterGenerate(commandArgs, files);
   });
@@ -139,6 +177,10 @@ describe('Acceptance: ember destroy', function () {
   });
 
   it('http-mock <name> does not remove server/', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await initApp();
     await generate(['http-mock', 'foo']);
     await generate(['http-mock', 'bar']);

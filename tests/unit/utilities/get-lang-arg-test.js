@@ -1,7 +1,7 @@
 'use strict';
 
 const getLangArg = require('../../../lib/utilities/get-lang-arg');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const MockUI = require('console-ui/mock');
 
 describe('lib/utilities/get-lang-arg', function () {
@@ -186,7 +186,6 @@ describe('lib/utilities/get-lang-arg', function () {
 
   describe('Invalid Language Flags, Misuse case: ember-cli `new` and `init` options / aliases', function () {
     [
-      '--disable-analytics',
       '--watcher=node',
       '--dry-run',
       '-d',
@@ -196,11 +195,10 @@ describe('lib/utilities/get-lang-arg', function () {
       '-b',
       '--skip-npm',
       '-sn',
-      '--skip-bower',
-      '-sb',
       '--welcome',
       '--no-welcome',
       '--yarn',
+      '--pnpm',
       '--name',
       '--skip-git',
       '-sg',

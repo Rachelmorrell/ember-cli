@@ -1,5 +1,1381 @@
 # ember-cli Changelog
 
+## Release (2026-11-02)
+
+* ember-cli 7.5.0-alpha.2 (minor)
+* @ember-tooling/classic-build-addon-blueprint 7.5.0-alpha.2 (minor)
+* @ember-tooling/classic-build-app-blueprint 7.5.0-alpha.2 (minor)
+
+#### :rocket: Enhancement
+* `@ember-tooling/classic-build-app-blueprint`
+  * [#11075](https://github.com/ember-cli/ember-cli/pull/11075) Use useRecommendedStore in the classic app blueprint ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#11071](https://github.com/ember-cli/ember-cli/pull/11071) Upgrade blueprint CI actions and @ember/test-helpers ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 1
+- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+## Release (2026-09-27)
+
+* ember-cli 7.5.0-alpha.1 (minor)
+* @ember-tooling/classic-build-addon-blueprint 7.5.0-alpha.1 (minor)
+* @ember-tooling/classic-build-app-blueprint 7.5.0-alpha.1 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11069](https://github.com/ember-cli/ember-cli/pull/11069) Prepare 7.5 Alpha ([@mansona](https://github.com/mansona))
+  * [#11067](https://github.com/ember-cli/ember-cli/pull/11067) Prepare 7.4 Beta ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11064](https://github.com/ember-cli/ember-cli/pull/11064) Promote Beta and update all dependencies for 7.3 Release ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-09-26)
+
+* ember-cli 7.4.0-beta.1 (minor)
+* @ember-tooling/classic-build-addon-blueprint 7.4.0-beta.1 (minor)
+* @ember-tooling/classic-build-app-blueprint 7.4.0-beta.1 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11067](https://github.com/ember-cli/ember-cli/pull/11067) Prepare 7.4 Beta ([@mansona](https://github.com/mansona))
+  * [#11062](https://github.com/ember-cli/ember-cli/pull/11062) Prepare 7.4 Alpha ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11064](https://github.com/ember-cli/ember-cli/pull/11064) Promote Beta and update all dependencies for 7.3 Release ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-09-21)
+
+* ember-cli 7.3.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 7.3.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 7.3.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11064](https://github.com/ember-cli/ember-cli/pull/11064) Promote Beta and update all dependencies for 7.3 Release ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11060](https://github.com/ember-cli/ember-cli/pull/11060) Prepare 7.3 Beta ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-08-17)
+
+* ember-cli 7.2.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 7.2.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 7.2.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11058](https://github.com/ember-cli/ember-cli/pull/11058) Promote Beta and update all dependencies for 7.2 release ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-addon-blueprint`
+  * [#11035](https://github.com/ember-cli/ember-cli/pull/11035) Add placeholder for documenting exports from an addon ([@kategengler](https://github.com/kategengler))
+* `ember-cli`
+  * [#10672](https://github.com/ember-cli/ember-cli/pull/10672) Separate blueprint model so it can be used outside of ember-cli ([@mansona](https://github.com/mansona))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#11050](https://github.com/ember-cli/ember-cli/pull/11050) fix default blueprint lookup ([@mansona](https://github.com/mansona))
+  * [#11027](https://github.com/ember-cli/ember-cli/pull/11027) Fix error when blueprint is missing keyword ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `ember-cli`
+  * [#11051](https://github.com/ember-cli/ember-cli/pull/11051) fix release-plan ([@mansona](https://github.com/mansona))
+  * [#11052](https://github.com/ember-cli/ember-cli/pull/11052) speed up windows CI ([@mansona](https://github.com/mansona))
+  * [#11049](https://github.com/ember-cli/ember-cli/pull/11049) fix help tests to stop relying on private APIs ([@mansona](https://github.com/mansona))
+  * [#11048](https://github.com/ember-cli/ember-cli/pull/11048) update fixturify-project from v2 to v7 ([@mansona](https://github.com/mansona))
+  * [#11044](https://github.com/ember-cli/ember-cli/pull/11044) add a notify discord webhook action for CI ([@mansona](https://github.com/mansona))
+  * [#11023](https://github.com/ember-cli/ember-cli/pull/11023) Update RELEASE.md ([@mansona](https://github.com/mansona))
+  * [#11037](https://github.com/ember-cli/ember-cli/pull/11037) bring test fixtures in line with updates from addon readme ([@void-mAlex](https://github.com/void-mAlex))
+  * [#11038](https://github.com/ember-cli/ember-cli/pull/11038) fix running tests on blueprint markdown changes ([@mansona](https://github.com/mansona))
+  * [#10880](https://github.com/ember-cli/ember-cli/pull/10880) stop using internal package cache in the addon smoke test and rely on pnpm caching ([@mansona](https://github.com/mansona))
+
+#### Committers: 4
+- Alex ([@void-mAlex](https://github.com/void-mAlex))
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2026-07-01)
+
+* ember-cli 7.1.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 7.1.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 7.1.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11040](https://github.com/ember-cli/ember-cli/pull/11040) Promote Beta and update all dependencies for 7.1 release ([@mansona](https://github.com/mansona))
+* `ember-cli`
+  * [#10610](https://github.com/ember-cli/ember-cli/pull/10610) use semver-deprecate instead of internal code ([@mansona](https://github.com/mansona))
+  * [#11008](https://github.com/ember-cli/ember-cli/pull/11008) update babel-remove-types to v2 ([@mansona](https://github.com/mansona))
+  * [#11009](https://github.com/ember-cli/ember-cli/pull/11009) update configstore to v8 ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#11006](https://github.com/ember-cli/ember-cli/pull/11006) update ember-welcome-page to v8 in app blueprint ([@mansona](https://github.com/mansona))
+  * [#11005](https://github.com/ember-cli/ember-cli/pull/11005) update ember-cli-deprecation-workflow to v4 ([@mansona](https://github.com/mansona))
+  * [#11003](https://github.com/ember-cli/ember-cli/pull/11003) update @ember/optional-features to v3 ([@mansona](https://github.com/mansona))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#11020](https://github.com/ember-cli/ember-cli/pull/11020) Update diff to latest v8.x ([@mkszepp](https://github.com/mkszepp))
+
+#### :house: Internal
+* `ember-cli`
+  * [#11033](https://github.com/ember-cli/ember-cli/pull/11033) Merge release into beta ([@mansona](https://github.com/mansona))
+  * [#11017](https://github.com/ember-cli/ember-cli/pull/11017) Add Sync Output Repos check to release instructions ([@kategengler](https://github.com/kategengler))
+  * [#11016](https://github.com/ember-cli/ember-cli/pull/11016) fix: sync-output-repos workflow failing on tag pushes ([@Copilot](https://github.com/apps/copilot-swe-agent))
+  * [#10999](https://github.com/ember-cli/ember-cli/pull/10999) update RELEASE with update-blueprint-deps commands ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11029](https://github.com/ember-cli/ember-cli/pull/11029) Prepare Beta Release ([@mansona](https://github.com/mansona))
+
+#### Committers: 4
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+- Markus Sanin ([@mkszepp](https://github.com/mkszepp))
+
+## Release (2026-05-22)
+
+* ember-cli 7.0.1 (patch)
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#11028](https://github.com/ember-cli/ember-cli/pull/11028) [BUGFIX release] fix require(esm) of blueprint indexes ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2026-05-15)
+
+* ember-cli 7.0.0 (major)
+* @ember-tooling/classic-build-addon-blueprint 7.0.0 (major)
+* @ember-tooling/classic-build-app-blueprint 7.0.0 (major)
+
+#### :boom: Breaking Change
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#11022](https://github.com/ember-cli/ember-cli/pull/11022) Promote Beta and update all dependencies for 7.0 release ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-04-09)
+
+* ember-cli 6.12.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 6.12.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 6.12.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10993](https://github.com/ember-cli/ember-cli/pull/10993) Promote Beta and update all dependencies for 6.12 release ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10939](https://github.com/ember-cli/ember-cli/pull/10939) Add warpDrive support to app-blueprint ([@Copilot](https://github.com/apps/copilot-swe-agent))
+* `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10969](https://github.com/ember-cli/ember-cli/pull/10969) Update ember-cli-htmlbars to ^7.0.0 in app-blueprint ([@Copilot](https://github.com/apps/copilot-swe-agent))
+
+#### :bug: Bug Fix
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10976](https://github.com/ember-cli/ember-cli/pull/10976) Enable `use-ember-modules` in blueprint optional-features.json ([@Copilot](https://github.com/apps/copilot-swe-agent))
+* `ember-cli`
+  * [#10941](https://github.com/ember-cli/ember-cli/pull/10941) Downgrade isbinaryfile ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10932](https://github.com/ember-cli/ember-cli/pull/10932) Remove tracked-built-ins (it comes built in with ember-source 6.8+) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10990](https://github.com/ember-cli/ember-cli/pull/10990) bump node on publish.yml and stop updating npm ([@mansona](https://github.com/mansona))
+  * [#10982](https://github.com/ember-cli/ember-cli/pull/10982) Update publish.yml to use PAT so that output repos workflow will run ([@kategengler](https://github.com/kategengler))
+  * [#10967](https://github.com/ember-cli/ember-cli/pull/10967) Replace `temp` package with Node.js built-in `fs.mkdtemp` ([@Copilot](https://github.com/apps/copilot-swe-agent))
+  * [#10931](https://github.com/ember-cli/ember-cli/pull/10931) update Release.md ([@mansona](https://github.com/mansona))
+  * [#10945](https://github.com/ember-cli/ember-cli/pull/10945) update release-plan for OIDC ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10947](https://github.com/ember-cli/ember-cli/pull/10947) bump in-range versions ([@mansona](https://github.com/mansona))
+
+#### Committers: 4
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2026-03-29)
+
+* ember-cli 6.11.2 (patch)
+* @ember-tooling/classic-build-addon-blueprint 6.11.2 (patch)
+* @ember-tooling/classic-build-app-blueprint 6.11.2 (patch)
+
+#### :bug: Bug Fix
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10977](https://github.com/ember-cli/ember-cli/pull/10977) Backport: Enable use-ember-modules in blueprint optional-features.json ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 1
+- NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+## Release (2026-03-29)
+
+* ember-cli 6.11.1 (patch)
+* @ember-tooling/classic-build-addon-blueprint 6.11.1 (patch)
+* @ember-tooling/classic-build-app-blueprint 6.11.1 (patch)
+
+#### :bug: Bug Fix
+* `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10975](https://github.com/ember-cli/ember-cli/pull/10975) Backport: Update ember-cli-htmlbars to ^7.0.0 in app-blueprint ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10974](https://github.com/ember-cli/ember-cli/pull/10974) Backport: Remove tracked-built-ins (it comes built in with ember-source 6.8+) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+* `ember-cli`
+  * [#10972](https://github.com/ember-cli/ember-cli/pull/10972) Support ember-source (ESM) -- without addon vendor paths ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2026-02-17)
+
+* ember-cli 6.11.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 6.11.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 6.11.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10960](https://github.com/ember-cli/ember-cli/pull/10960) Promote Beta and update all dependencies for 6.11 release ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10929](https://github.com/ember-cli/ember-cli/pull/10929) Prepare 6.11-beta ([@mansona](https://github.com/mansona))
+  * [#10919](https://github.com/ember-cli/ember-cli/pull/10919) Prepare 6.11-alpha ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-02-09)
+
+* ember-cli 6.10.2 (patch)
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10949](https://github.com/ember-cli/ember-cli/pull/10949) [backport release] remove unused isbinaryfile from ember-cli package ([@mansona](https://github.com/mansona))
+  * [#10940](https://github.com/ember-cli/ember-cli/pull/10940) [bugfix release] remove fixturify-project from dependencies ([@mansona](https://github.com/mansona))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10952](https://github.com/ember-cli/ember-cli/pull/10952) add correct --publish-branch to pnpm publish ([@mansona](https://github.com/mansona))
+  * [#10951](https://github.com/ember-cli/ember-cli/pull/10951) Fix PR name for stable release-plan pull request ([@mansona](https://github.com/mansona))
+  * [#10950](https://github.com/ember-cli/ember-cli/pull/10950) [backport release] update release-plan for OIDC ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-02-08)
+
+* ember-cli 6.10.1 (patch)
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10949](https://github.com/ember-cli/ember-cli/pull/10949) [backport release] remove unused isbinaryfile from ember-cli package ([@mansona](https://github.com/mansona))
+  * [#10940](https://github.com/ember-cli/ember-cli/pull/10940) [bugfix release] remove fixturify-project from dependencies ([@mansona](https://github.com/mansona))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10951](https://github.com/ember-cli/ember-cli/pull/10951) Fix PR name for stable release-plan pull request ([@mansona](https://github.com/mansona))
+  * [#10950](https://github.com/ember-cli/ember-cli/pull/10950) [backport release] update release-plan for OIDC ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2026-01-23)
+
+* ember-cli 6.10.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 6.10.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 6.10.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10923](https://github.com/ember-cli/ember-cli/pull/10923) Promote Beta and update all dependencies for 6.10 release ([@mansona](https://github.com/mansona))
+  * [#10887](https://github.com/ember-cli/ember-cli/pull/10887) Update `chalk` dependency to latest ([@bertdeblock](https://github.com/bertdeblock))
+* `ember-cli`
+  * [#10906](https://github.com/ember-cli/ember-cli/pull/10906) Even more dependency updates ([@bertdeblock](https://github.com/bertdeblock))
+  * [#10892](https://github.com/ember-cli/ember-cli/pull/10892) More dependency updates ([@bertdeblock](https://github.com/bertdeblock))
+  * [#10890](https://github.com/ember-cli/ember-cli/pull/10890) Update various dependencies ([@bertdeblock](https://github.com/bertdeblock))
+  * [#10870](https://github.com/ember-cli/ember-cli/pull/10870) Upgrade broccoli ([@kategengler](https://github.com/kategengler))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10886](https://github.com/ember-cli/ember-cli/pull/10886) Update required Node version to v20.19.0 ([@bertdeblock](https://github.com/bertdeblock))
+* `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10876](https://github.com/ember-cli/ember-cli/pull/10876) bump minimum node version to 20.19 ([@mansona](https://github.com/mansona))
+
+#### :memo: Documentation
+* `ember-cli`
+  * [#10874](https://github.com/ember-cli/ember-cli/pull/10874) Update RELEASE.md ([@mansona](https://github.com/mansona))
+
+#### :house: Internal
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`
+  * [#10891](https://github.com/ember-cli/ember-cli/pull/10891) Update `prettier` + setup ([@bertdeblock](https://github.com/bertdeblock))
+* `ember-cli`
+  * [#10878](https://github.com/ember-cli/ember-cli/pull/10878) stop using internal package cache for smoke-test-slow ([@mansona](https://github.com/mansona))
+  * [#10863](https://github.com/ember-cli/ember-cli/pull/10863) Missed a script -- fix updating output repos ([@kategengler](https://github.com/kategengler))
+  * [#10862](https://github.com/ember-cli/ember-cli/pull/10862) Fix typo in output repo workflow ([@kategengler](https://github.com/kategengler))
+  * [#10861](https://github.com/ember-cli/ember-cli/pull/10861) Fix output repo generation with new tag format ([@kategengler](https://github.com/kategengler))
+
+#### Committers: 3
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+
+## Release (2025-12-11)
+
+* ember-cli 6.9.1 (patch)
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10888](https://github.com/ember-cli/ember-cli/pull/10888) Upgrade broccoli ([@kategengler](https://github.com/kategengler))
+
+#### Committers: 1
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+
+## Release (2025-12-10)
+
+* ember-cli 6.9.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 6.9.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 6.9.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10885](https://github.com/ember-cli/ember-cli/pull/10885) Promote Beta and update all dependencies for 6.9 release ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10854](https://github.com/ember-cli/ember-cli/pull/10854) Prepare Beta Release ([@mansona](https://github.com/mansona))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10809](https://github.com/ember-cli/ember-cli/pull/10809) Update RELEASE ([@mansona](https://github.com/mansona))
+  * [#10813](https://github.com/ember-cli/ember-cli/pull/10813) Document need for future vite experiment test cleanup ([@ef4](https://github.com/ef4))
+
+#### Committers: 2
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
+## Release (2025-11-29)
+
+* ember-cli 6.8.1 (patch)
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10860](https://github.com/ember-cli/ember-cli/pull/10860) [BUGFIX release]: Enter the WatchDetector branch of the build command when EMBROIDER_PREBUILD is present ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-10-14)
+
+* ember-cli 6.8.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 6.8.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 6.8.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10853](https://github.com/ember-cli/ember-cli/pull/10853) Promote Beta and update all dependencies for 6.8 release ([@mansona](https://github.com/mansona))
+  * [#10831](https://github.com/ember-cli/ember-cli/pull/10831) [bugfix beta] enable `--strict` by default to match new app blueprint ([@mansona](https://github.com/mansona))
+  * [#10808](https://github.com/ember-cli/ember-cli/pull/10808) Prepare 6.8 Beta ([@mansona](https://github.com/mansona))
+* `ember-cli`
+  * [#10844](https://github.com/ember-cli/ember-cli/pull/10844) [beta] Error when `ember (generate|destroy) (http-proxy|http-mock|server)` is used in a Vite-based project ([@kategengler](https://github.com/kategengler))
+  * [#10802](https://github.com/ember-cli/ember-cli/pull/10802) enable Vite by default ([@mansona](https://github.com/mansona))
+  * [#10804](https://github.com/ember-cli/ember-cli/pull/10804) Support a `--ts` alias for the `addon`, `init` and `new` commands ([@bertdeblock](https://github.com/bertdeblock))
+  * [#10781](https://github.com/ember-cli/ember-cli/pull/10781) Add new `VITE` experiment to generate app with new Vite blueprint ([@pichfl](https://github.com/pichfl))
+  * [#10785](https://github.com/ember-cli/ember-cli/pull/10785) Depracate passing filenames and globs to `init` ([@pichfl](https://github.com/pichfl))
+  * [#10776](https://github.com/ember-cli/ember-cli/pull/10776) Add deprecation warning for the `--embroider` argument ([@pichfl](https://github.com/pichfl))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10791](https://github.com/ember-cli/ember-cli/pull/10791) update the format of the ember-cli-update.json ([@mansona](https://github.com/mansona))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10846](https://github.com/ember-cli/ember-cli/pull/10846) [beta bugfix] allow build --watch only in EMBROIDER_PREBUILD ([@mansona](https://github.com/mansona))
+  * [#10826](https://github.com/ember-cli/ember-cli/pull/10826) move resolution of @ember/app-blueprint to prevent loading latest ([@mansona](https://github.com/mansona))
+  * [#10782](https://github.com/ember-cli/ember-cli/pull/10782) update heimdall-fs-monitor ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10803](https://github.com/ember-cli/ember-cli/pull/10803) Add "ember-blueprint" to keywords in `package.json` for the classic blueprints ([@pichfl](https://github.com/pichfl))
+* `@ember-tooling/classic-build-app-blueprint`
+  * [#10798](https://github.com/ember-cli/ember-cli/pull/10798) Add import from ember-data breakage/deprecation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+* `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10707](https://github.com/ember-cli/ember-cli/pull/10707) Enabled recommended configs from eslint-plugin-n and eslint-plugin-qunit ([@ijlee2](https://github.com/ijlee2))
+
+#### :memo: Documentation
+* `ember-cli`
+  * [#10843](https://github.com/ember-cli/ember-cli/pull/10843) Further contextualize help output and error when options and commands that are no longer supported in Vite-based projects are used ([@kategengler](https://github.com/kategengler))
+  * [#10840](https://github.com/ember-cli/ember-cli/pull/10840) [beta] fix help for vite-based projects ([@kategengler](https://github.com/kategengler))
+  * [#10835](https://github.com/ember-cli/ember-cli/pull/10835) Update deprecation message for --embroider option ([@kategengler](https://github.com/kategengler))
+
+#### :house: Internal
+* `ember-cli`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10847](https://github.com/ember-cli/ember-cli/pull/10847) Prepare Beta Release ([@mansona](https://github.com/mansona))
+  * [#10825](https://github.com/ember-cli/ember-cli/pull/10825) Prepare Beta Release ([@mansona](https://github.com/mansona))
+  * [#10820](https://github.com/ember-cli/ember-cli/pull/10820) Prepare Beta Release ([@mansona](https://github.com/mansona))
+* `ember-cli`
+  * [#10845](https://github.com/ember-cli/ember-cli/pull/10845) [beta] update @ember/app-blueprint to latest beta ([@mansona](https://github.com/mansona))
+  * [#10833](https://github.com/ember-cli/ember-cli/pull/10833) [bugfix beta] bump the @ember/app-blueprint version ([@mansona](https://github.com/mansona))
+  * [#10823](https://github.com/ember-cli/ember-cli/pull/10823) fix incorrect ember-cli-update version in tests ([@mansona](https://github.com/mansona))
+  * [#10819](https://github.com/ember-cli/ember-cli/pull/10819) update @ember/app-blueprint beta version ([@mansona](https://github.com/mansona))
+  * [#10806](https://github.com/ember-cli/ember-cli/pull/10806) skip build watch tests when vite is enabled ([@mansona](https://github.com/mansona))
+  * [#10790](https://github.com/ember-cli/ember-cli/pull/10790) Reorganize tests for `new` and `addon` commands ([@pichfl](https://github.com/pichfl))
+  * [#10783](https://github.com/ember-cli/ember-cli/pull/10783) remove unused changelog script ([@mansona](https://github.com/mansona))
+  * [#10764](https://github.com/ember-cli/ember-cli/pull/10764) fix double CI run on release-plan PR ([@mansona](https://github.com/mansona))
+  * [#10750](https://github.com/ember-cli/ember-cli/pull/10750) Add more notes to the Release.md ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10799](https://github.com/ember-cli/ember-cli/pull/10799) Prepare Alpha Release ([@mansona](https://github.com/mansona))
+  * [#10778](https://github.com/ember-cli/ember-cli/pull/10778) Prepare Alpha Release ([@mansona](https://github.com/mansona))
+  * [#10756](https://github.com/ember-cli/ember-cli/pull/10756) Prepare Alpha Release ([@mansona](https://github.com/mansona))
+  * [#10763](https://github.com/ember-cli/ember-cli/pull/10763) Prepare 6.8-alpha ([@mansona](https://github.com/mansona))
+
+#### Committers: 6
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Florian Pichler ([@pichfl](https://github.com/pichfl))
+- Isaac Lee ([@ijlee2](https://github.com/ijlee2))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-10-08)
+
+* ember-cli 6.7.2 (patch)
+* @ember-tooling/classic-build-addon-blueprint 6.7.1 (patch)
+* @ember-tooling/classic-build-app-blueprint 6.7.2 (patch)
+
+#### :bug: Bug Fix
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10838](https://github.com/ember-cli/ember-cli/pull/10838) Add package license metadata to match repository ([@davidtaylorhq](https://github.com/davidtaylorhq))
+
+#### Committers: 1
+- David Taylor ([@davidtaylorhq](https://github.com/davidtaylorhq))
+
+## Release (2025-10-06)
+
+* ember-cli 6.7.1 (patch)
+* @ember-tooling/classic-build-app-blueprint 6.7.1 (patch)
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10834](https://github.com/ember-cli/ember-cli/pull/10834) [bugfix release] Fix tests using wrong versions ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-app-blueprint`
+  * [#10824](https://github.com/ember-cli/ember-cli/pull/10824) [bugfix release] fix app-blueprint being considered a blueprint ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
+## Release (2025-09-06)
+
+* ember-cli 6.7.0 (minor)
+* @ember-tooling/classic-build-addon-blueprint 6.7.0 (minor)
+* @ember-tooling/classic-build-app-blueprint 6.7.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10796](https://github.com/ember-cli/ember-cli/pull/10796) Promote Beta and update all dependencies for 6.7 release ([@mansona](https://github.com/mansona))
+  * [#10742](https://github.com/ember-cli/ember-cli/pull/10742) Drop node 18, add node 24 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10794](https://github.com/ember-cli/ember-cli/pull/10794) Fix potential NPE ([@boris-petrov](https://github.com/boris-petrov))
+
+#### :memo: Documentation
+* `ember-cli`
+  * [#10724](https://github.com/ember-cli/ember-cli/pull/10724) Update RELEASE.md to fully document new release-plan setup ([@mansona](https://github.com/mansona))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10801](https://github.com/ember-cli/ember-cli/pull/10801) update github-changelog ([@mansona](https://github.com/mansona))
+  * [#10761](https://github.com/ember-cli/ember-cli/pull/10761) update release-plan ([@mansona](https://github.com/mansona))
+  * [#10748](https://github.com/ember-cli/ember-cli/pull/10748) update blueprint version of ember-cli as part of release plan ([@mansona](https://github.com/mansona))
+  * [#10747](https://github.com/ember-cli/ember-cli/pull/10747) only use the PAT for the PR creation in release-plan ([@mansona](https://github.com/mansona))
+  * [#10744](https://github.com/ember-cli/ember-cli/pull/10744) run tests on the release-plan PR ([@mansona](https://github.com/mansona))
+  * [#10735](https://github.com/ember-cli/ember-cli/pull/10735) remove unnecessary project override ([@mansona](https://github.com/mansona))
+* `ember-cli`, `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`
+  * [#10800](https://github.com/ember-cli/ember-cli/pull/10800) fix release-plan for stable release ([@mansona](https://github.com/mansona))
+  * [#10736](https://github.com/ember-cli/ember-cli/pull/10736) update all sub-packages to have the @ember-tooling prefix ([@mansona](https://github.com/mansona))
+  * [#10671](https://github.com/ember-cli/ember-cli/pull/10671) Implement the built in app, addon, and blueprint blueprints by package lookup ([@mansona](https://github.com/mansona))
+* `@ember-tooling/classic-build-addon-blueprint`, `@ember-tooling/classic-build-app-blueprint`, `ember-cli`
+  * [#10738](https://github.com/ember-cli/ember-cli/pull/10738) add a repository for each of the packages ([@mansona](https://github.com/mansona))
+
+#### Committers: 3
+- Boris Petrov ([@boris-petrov](https://github.com/boris-petrov))
+- Chris Manson ([@mansona](https://github.com/mansona))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-07-29)
+
+* ember-cli 6.6.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`
+  * [#10749](https://github.com/ember-cli/ember-cli/pull/10749) Update all dependencies for 6.6 release ([@mansona](https://github.com/mansona))
+  * [#10751](https://github.com/ember-cli/ember-cli/pull/10751) [BETA BACKPORT] Backport drop node 18 ([@mansona](https://github.com/mansona))
+  * [#10701](https://github.com/ember-cli/ember-cli/pull/10701) [ENHANCEMENT] Support Bun ([@hexadecy](https://github.com/hexadecy))
+  * [#10664](https://github.com/ember-cli/ember-cli/pull/10664) [ENHANCEMENT] Remove ember-fetch ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10711](https://github.com/ember-cli/ember-cli/pull/10711) fix yuidoc generation on publish ([@mansona](https://github.com/mansona))
+  * [#10702](https://github.com/ember-cli/ember-cli/pull/10702) [Bugfix]: Update ember-data and unify the versions between @ and non-@ ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10699](https://github.com/ember-cli/ember-cli/pull/10699) Start using release-plan for releasing ember-cli ([@mansona](https://github.com/mansona))
+  * [#10670](https://github.com/ember-cli/ember-cli/pull/10670) testing: don't generate temp directories in the repo ([@mansona](https://github.com/mansona))
+
+#### Committers: 3
+- Chris Manson ([@mansona](https://github.com/mansona))
+- Michel Couillard ([@hexadecy](https://github.com/hexadecy))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-06-16)
+
+* ember-cli 6.5.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-cli`
+  * [#10721](https://github.com/ember-cli/ember-cli/pull/10721) Prepare 6.5.0 release ([@mansona](https://github.com/mansona))
+  * [#10705](https://github.com/ember-cli/ember-cli/pull/10705) add `--strict` flag for new app and addon generation ([@mansona](https://github.com/mansona))
+
+#### :bug: Bug Fix
+* `ember-cli`
+  * [#10684](https://github.com/ember-cli/ember-cli/pull/10684) [BUGFIX] Remove deprecated `@types/eslint__js` dependency from `app` blueprint ([@gvdp](https://github.com/gvdp))
+
+#### :house: Internal
+* `ember-cli`
+  * [#10726](https://github.com/ember-cli/ember-cli/pull/10726) use patched github-changelog for properly rolling up beta changelog ([@mansona](https://github.com/mansona))
+  * [#10722](https://github.com/ember-cli/ember-cli/pull/10722) prevent clashes between release-plan branches ([@mansona](https://github.com/mansona))
+  * [#10719](https://github.com/ember-cli/ember-cli/pull/10719) [Backport release]: start using release-plan to release ember-cli ([@mansona](https://github.com/mansona))
+  * [#10718](https://github.com/ember-cli/ember-cli/pull/10718) Prepare Beta Release v6.5.0-beta.2 ([@github-actions[bot]](https://github.com/apps/github-actions))
+  * [#10717](https://github.com/ember-cli/ember-cli/pull/10717) pass --publish-branch to release-plan publish ([@mansona](https://github.com/mansona))
+  * [#10716](https://github.com/ember-cli/ember-cli/pull/10716) Prepare Beta Release v6.5.0-beta.1 ([@github-actions[bot]](https://github.com/apps/github-actions))
+  * [#10715](https://github.com/ember-cli/ember-cli/pull/10715) [Backport beta]: Set up release-plan ([@mansona](https://github.com/mansona))
+
+#### Committers: 3
+- Chris Manson ([@mansona](https://github.com/mansona))
+- [@github-actions[bot]](https://github.com/apps/github-actions)
+- [@gvdp](https://github.com/gvdp)
+
+## v6.4.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.3.0...v6.4.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.3.0...v6.4.0)
+
+#### Changelog
+
+- [#10598](https://github.com/ember-cli/ember-cli/pull/10598) [INTERNAL] Remove "locked versions for pre-v1.0.0 packages" tests [@bertdeblock](https://github.com/bertdeblock)
+- [#10620](https://github.com/ember-cli/ember-cli/pull/10620) [BUGFIX] Handle errors gracefully when proxy target is down [@dwickern](https://github.com/dwickern)
+- [#10641](https://github.com/ember-cli/ember-cli/pull/10641) [Bugfix] Fix missing lint dependency for typescript projects [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10659](https://github.com/ember-cli/ember-cli/pull/10659) [BUGFIX] Improve de-typing `.gts` files [@bertdeblock](https://github.com/bertdeblock)
+- [#10661](https://github.com/ember-cli/ember-cli/pull/10661) [ENHANCEMENT] Update `ember-try` to v4 in blueprints [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v6.3.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.3.0...v6.3.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.3.0...v6.3.1)
+
+#### Changelog
+
+- [#10685](https://github.com/ember-cli/ember-cli/pull/10685) Add configuration to ember-cli-build to opt new projects out of the deprecated behavior of the Store class extending EmberObject [@kategengler](https://github.com/kategengler)
+
+Thank you to all who took the time to contribute!
+
+## v6.3.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.2.0...v6.3.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.2.0...v6.3.0)
+
+#### Changelog
+
+- [#10644](https://github.com/ember-cli/ember-cli/pull/10644)  [BUGFIX beta] `--no-ember-data` fixes [@Windvis](https://github.com/Windvis)
+- [#10647](https://github.com/ember-cli/ember-cli/pull/10647) [Bugfix beta]: Update ember-page-title to latest (v9) [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10668](https://github.com/ember-cli/ember-cli/pull/10668) Update the `--no-ember-data` fixtures [@Windvis](https://github.com/Windvis)
+- [#10646](https://github.com/ember-cli/ember-cli/pull/10646) [Bugfix release]: Fix eslint parser for js when using --typescript [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10633](https://github.com/ember-cli/ember-cli/pull/10633) [BUGFIX release] Update all EmberData deps to stable [@Windvis](https://github.com/Windvis)
+- [#10643](https://github.com/ember-cli/ember-cli/pull/10643) Remove unmaintained ember-cli-lodash-subset in favor of requiring functions directly from lodash [@kategengler](https://github.com/kategengler)
+- [#10638](https://github.com/ember-cli/ember-cli/pull/10638) [BUGFIX release] Fix ember-data configuration again [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10534](https://github.com/ember-cli/ember-cli/pull/10534) [CLEANUP] Clean up `outputPaths` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10538](https://github.com/ember-cli/ember-cli/pull/10538) [CLEANUP] Clean up Travis CI deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10586](https://github.com/ember-cli/ember-cli/pull/10586) [INTERNAL] Add tests to ensure no linting errors post generating a new app or addon [@bertdeblock](https://github.com/bertdeblock)
+- [#10587](https://github.com/ember-cli/ember-cli/pull/10587) [BUGFIX] Fix including `ember-source` types for v1 addons [@bertdeblock](https://github.com/bertdeblock)
+- [#10589](https://github.com/ember-cli/ember-cli/pull/10589) [ENHANCEMENT] Deprecate v1 addon `contentFor` types [RFC 1044] [@bertdeblock](https://github.com/bertdeblock)
+- [#10592](https://github.com/ember-cli/ember-cli/pull/10592) [BUGFIX] Fix ESLint config for v1 addons [@bertdeblock](https://github.com/bertdeblock)
+- [#10593](https://github.com/ember-cli/ember-cli/pull/10593) [CLEANUP] Clean up old `broccoli-builder` fallback [@bertdeblock](https://github.com/bertdeblock)
+- [#10594](https://github.com/ember-cli/ember-cli/pull/10594) [CLEANUP] Clean up old `heimdalljs` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10595](https://github.com/ember-cli/ember-cli/pull/10595) [ENHANCEMENT] Update `@glimmer/component` to v2 in blueprints [@bertdeblock](https://github.com/bertdeblock)
+- [#10596](https://github.com/ember-cli/ember-cli/pull/10596) [ENHANCEMENT] Vanilla Prettier setup in blueprints [RFC 1055] [@bertdeblock](https://github.com/bertdeblock)
+- [#10597](https://github.com/ember-cli/ember-cli/pull/10597) [CLEANUP] Clean up remaining Travis fixtures [@bertdeblock](https://github.com/bertdeblock)
+- [#10599](https://github.com/ember-cli/ember-cli/pull/10599) [INTERNAL] Bump `content-tag` to v3 [@SergeAstapov](https://github.com/SergeAstapov)
+- [#10612](https://github.com/ember-cli/ember-cli/pull/10612) [BUGFIX release]: tsconfig.json referenced paths to types instead of imports [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10613](https://github.com/ember-cli/ember-cli/pull/10613) [ENHANCEMENT] Support `--ember-data` / `--no-ember-data` flags when creating a new app [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10615](https://github.com/ember-cli/ember-cli/pull/10615) [ENHANCEMENT] Simplify Prettier config in blueprints [@bendemboski](https://github.com/bendemboski)
+- [#10616](https://github.com/ember-cli/ember-cli/pull/10616) [INTERNAL] Add test to ensure all package files are parseable [@bertdeblock](https://github.com/bertdeblock)
+- [#10617](https://github.com/ember-cli/ember-cli/pull/10617) [ENHANCEMENT] Use `staticInvokables` in the `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10618](https://github.com/ember-cli/ember-cli/pull/10618) [INTERNAL] Avoid output for `deprecate` tests [@bertdeblock](https://github.com/bertdeblock)
+- [#10619](https://github.com/ember-cli/ember-cli/pull/10619) [BUGFIX] Only remove type imports when removing the types from `.gts` files in blueprints [@Windvis](https://github.com/Windvis)
+- [#10621](https://github.com/ember-cli/ember-cli/pull/10621) [ENHANCEMENT] Bump `@ember/test-helpers` to v5.1.0 in blueprints [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v6.2.3
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.2.2...v6.2.3)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.2.2...v6.2.3)
+
+#### Changelog
+
+- [#10646](https://github.com/ember-cli/ember-cli/pull/10646) [Bugfix release]: Fix eslint parser for js when using --typescript [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v6.2.2
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.2.1...v6.2.2)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.2.1...v6.2.2)
+
+#### Changelog
+
+- [#10633](https://github.com/ember-cli/ember-cli/pull/10633) [BUGFIX release] Update all EmberData deps to stable [@Windvis](https://github.com/Windvis)
+- [#10643](https://github.com/ember-cli/ember-cli/pull/10643) Remove unmaintained ember-cli-lodash-subset in favor of requiring functions directly from lodash [@kategengler](https://github.com/kategengler)
+
+Thank you to all who took the time to contribute!
+
+## v6.2.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.2.0...v6.2.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.2.0...v6.2.1)
+
+#### Changelog
+
+- [#10638](https://github.com/ember-cli/ember-cli/pull/10638) [BUGFIX release] Fix ember-data configuration again [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v6.2.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.1.0...v6.2.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.1.0...v6.2.0)
+
+#### Changelog
+
+- [#10496](https://github.com/ember-cli/ember-cli/pull/10496) [CLEANUP] Clean up support for incorrect values for `BROCCOLI_VIZ` env var [@bertdeblock](https://github.com/bertdeblock)
+- [#10555](https://github.com/ember-cli/ember-cli/pull/10555) [ENHANCEMENT] Bump `pnpm/action-setup` to v4 in `app` and `addon` blueprints [@SergeAstapov](https://github.com/SergeAstapov)
+- [#10562](https://github.com/ember-cli/ember-cli/pull/10562) [ENHANCEMENT] Allow creating apps and addons everywhere [@bertdeblock](https://github.com/bertdeblock)
+- [#10577](https://github.com/ember-cli/ember-cli/pull/10577) [ENHANCEMENT] Remove `@ember/string` from `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10578](https://github.com/ember-cli/ember-cli/pull/10578) [ENHANCEMENT] Test against Node v22 [@bertdeblock](https://github.com/bertdeblock)
+- [#10579](https://github.com/ember-cli/ember-cli/pull/10579) [INTERNAL] Update `sort-package-json` [@bertdeblock](https://github.com/bertdeblock)
+- [#10580](https://github.com/ember-cli/ember-cli/pull/10580) [ENHANCEMENT] Update LTS versions in blueprints [@bertdeblock](https://github.com/bertdeblock)
+- [#10583](https://github.com/ember-cli/ember-cli/pull/10583) [ENHANCEMENT] Update `app` blueprint to support `ember-qunit` v9 [@ef4](https://github.com/ef4)
+- [#10585](https://github.com/ember-cli/ember-cli/pull/10585) [INTERNAL] Support `WRITE_FIXTURES` in more test files [@ef4](https://github.com/ef4)
+
+Thank you to all who took the time to contribute!
+
+## v6.1.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.0.0...v6.1.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.0.0...v6.1.0)
+
+#### Changelog
+
+- [#10563](https://github.com/ember-cli/ember-cli/pull/10563) [Backport release]: update @ember/test-helpers. #10522 [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10564](https://github.com/ember-cli/ember-cli/pull/10564) [BUGFIX] Add missing package for TS eslint config [@mkszepp](https://github.com/mkszepp)
+- [#10514](https://github.com/ember-cli/ember-cli/pull/10514) [backport release] use fork of remove-types with config: false [@mansona](https://github.com/mansona)
+- [#10515](https://github.com/ember-cli/ember-cli/pull/10515) Use colors for the concurrently prefixes in package.json [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10516](https://github.com/ember-cli/ember-cli/pull/10516) Use ESLint 9 and Flat Config [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10521](https://github.com/ember-cli/ember-cli/pull/10521) Make tests easier to run, closes #10520 [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10525](https://github.com/ember-cli/ember-cli/pull/10525) Upgrade concurrently, closes #10524 [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10526](https://github.com/ember-cli/ember-cli/pull/10526) Update ember-resolver, closes #10523 [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10527](https://github.com/ember-cli/ember-cli/pull/10527) Update @ember/test-helpers, closes #10522 [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10530](https://github.com/ember-cli/ember-cli/pull/10530) Update ember-load-initializers to v3 [@mkszepp](https://github.com/mkszepp)
+- [#10531](https://github.com/ember-cli/ember-cli/pull/10531) Update stylelint and depended package [@mkszepp](https://github.com/mkszepp)
+- [#10535](https://github.com/ember-cli/ember-cli/pull/10535) Upgrade eslint-plugin-ember [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v6.0.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v6.0.0...v6.0.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v6.0.0...v6.0.1)
+
+#### Changelog
+
+- [#10563](https://github.com/ember-cli/ember-cli/pull/10563) [Backport release]: update @ember/test-helpers. #10522 [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v6.0.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.12.0...v6.0.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.12.0...v6.0.0)
+
+#### Changelog
+
+- [#10559](https://github.com/ember-cli/ember-cli/pull/10559) [ENHANCEMENT] Make deprecations throw when the `until` for `ember-cli` has passed [@kategengler](https://github.com/kategengler)
+- [#10453](https://github.com/ember-cli/ember-cli/pull/10453) [ENHANCEMENT] Allow specifying no CI provider [@deanylev](https://github.com/deanylev)
+- [#10505](https://github.com/ember-cli/ember-cli/pull/10505) use our fork of remove-types with config: false [@mansona](https://github.com/mansona)
+- [#10506](https://github.com/ember-cli/ember-cli/pull/10506) [ENHANCEMENT] Use the official types in the blueprints [@Windvis](https://github.com/Windvis)
+- [#10507](https://github.com/ember-cli/ember-cli/pull/10507) Official types in blueprints amendments [@Windvis](https://github.com/Windvis)
+
+Thank you to all who took the time to contribute!
+
+## v5.12.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.11.0...v5.12.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.11.0...v5.12.0)
+
+#### Changelog
+
+- [#10483](https://github.com/ember-cli/ember-cli/pull/10483) Bump @embroider/* dependencies [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10486](https://github.com/ember-cli/ember-cli/pull/10486) Bump ember-template-lint [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10481](https://github.com/ember-cli/ember-cli/pull/10481) Bump ember-cli-app-version [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10485](https://github.com/ember-cli/ember-cli/pull/10485) Bump eslint-plugin-ember [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10484](https://github.com/ember-cli/ember-cli/pull/10484) Bump ember-resolver [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10479](https://github.com/ember-cli/ember-cli/pull/10479) Bump @typescript-eslint dependencies to latest [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10482](https://github.com/ember-cli/ember-cli/pull/10482) Bump qunit-dom [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10480](https://github.com/ember-cli/ember-cli/pull/10480) Bump @ember/string [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10499](https://github.com/ember-cli/ember-cli/pull/10499) [ENHANCEMENT] Update `testem` [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v5.11.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.10.0...v5.11.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.10.0...v5.11.0)
+
+#### Changelog
+
+- [#10474](https://github.com/ember-cli/ember-cli/pull/10474) Improve dx when WelcomePage is present [@ef4](https://github.com/ef4)
+- [#10475](https://github.com/ember-cli/ember-cli/pull/10475) Document WRITE_FIXTURES [@kategengler](https://github.com/kategengler)
+- [#10476](https://github.com/ember-cli/ember-cli/pull/10476) Bump content-tag to v2 [@SergeAstapov](https://github.com/SergeAstapov)
+
+Thank you to all who took the time to contribute!
+
+## v5.10.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.9.0...v5.10.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.9.0...v5.10.0)
+
+#### Changelog
+
+- [#10464](https://github.com/ember-cli/ember-cli/pull/10464) Specified the locale in setupIntl() [@ijlee2](https://github.com/ijlee2)
+
+Thank you to all who took the time to contribute!
+
+## v5.9.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.8.1...v5.9.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.8.1...v5.9.0)
+
+#### Changelog
+
+- [#10446](https://github.com/ember-cli/ember-cli/pull/10446) [ENHANCEMENT] Format markdown files in blueprints with Prettier [@bertdeblock](https://github.com/bertdeblock)
+- [#10450](https://github.com/ember-cli/ember-cli/pull/10450) [ENHANCEMENT] Remove warning when encountering a `.js` file when generating a TS blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10452](https://github.com/ember-cli/ember-cli/pull/10452) [BUGFIX] Make sure to use the correct package manager in concurrently scripts [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v5.8.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.8.0...v5.8.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.8.0...v5.8.1)
+
+#### Changelog
+
+- [#10458](https://github.com/ember-cli/ember-cli/pull/10458) Use Lodash's `_.template` instead of `lodash.template` package [@gorner](https://github.com/gorner)
+
+Thank you to all who took the time to contribute!
+
+## v5.8.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.7.0...v5.8.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.7.0...v5.8.0)
+
+#### Changelog
+
+- [#10418](https://github.com/ember-cli/ember-cli/pull/10418) [ENHANCEMENT] Use `content-tag` to parse GTS in blueprints [@IgnaceMaes](https://github.com/IgnaceMaes)
+- [#10432](https://github.com/ember-cli/ember-cli/pull/10432) Filter out tsconfig.declarations.json correctly [@bendemboski](https://github.com/bendemboski)
+- [#10436](https://github.com/ember-cli/ember-cli/pull/10436) stop using wyvox/action-setup-pnpm [@mansona](https://github.com/mansona)
+- [#10437](https://github.com/ember-cli/ember-cli/pull/10437) [ENHANCEMENT] Update LTS scenarios in `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10438](https://github.com/ember-cli/ember-cli/pull/10438) [ENHANCEMENT] Add `declarations` folder to `.eslintignore` file in `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10439](https://github.com/ember-cli/ember-cli/pull/10439) [ENHANCEMENT] Add tsconfig files to `.npmignore` file in `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v5.7.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.6.0...v5.7.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.6.0...v5.7.0)
+
+#### Changelog
+
+- [#10440](https://github.com/ember-cli/ember-cli/pull/10440) Update optional-features.json [@achambers](https://github.com/achambers)
+- [#10445](https://github.com/ember-cli/ember-cli/pull/10445) Unpin Node 18 for ci [@kategengler](https://github.com/kategengler)
+- [#10425](https://github.com/ember-cli/ember-cli/pull/10425) fix GitHub Action floating deps scenario for PNPM [@jelhan](https://github.com/jelhan)
+
+Thank you to all who took the time to contribute!
+
+## v5.6.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.5.0...v5.6.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.5.0...v5.6.0)
+
+#### Changelog
+
+- [#10394](https://github.com/ember-cli/ember-cli/pull/10394) [ENHANCEMENT] automatically select a port by default with `ember serve` [@sportshead](https://github.com/sportshead)
+- [#10404](https://github.com/ember-cli/ember-cli/pull/10404) Add a workflow to deploy api docs to ember-learn/ember-cli.github.io [@kategengler](https://github.com/kategengler)
+- [#10405](https://github.com/ember-cli/ember-cli/pull/10405) Update to deploy to the master branch and also correct a comment [@kategengler](https://github.com/kategengler)
+
+Thank you to all who took the time to contribute!
+
+## v5.5.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.4.1...v5.5.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.4.1...v5.5.0)
+
+#### Changelog
+
+- [#10332](https://github.com/ember-cli/ember-cli/pull/10332) [ENHANCEMENT] Support converting gts files in blueprint [@IgnaceMaes](https://github.com/IgnaceMaes)
+- [#10350](https://github.com/ember-cli/ember-cli/pull/10350) [ENHANCEMENT] Deprecate Travis CI support [@bertdeblock](https://github.com/bertdeblock)
+- [#10370](https://github.com/ember-cli/ember-cli/pull/10370) When generating a new app with --embroider use all optimisation flags [@mansona](https://github.com/mansona)
+- [#10393](https://github.com/ember-cli/ember-cli/pull/10393) [ENHANCEMENT] feat: add skip-install alias to skip-npm [@IgnaceMaes](https://github.com/IgnaceMaes)
+- [#10403](https://github.com/ember-cli/ember-cli/pull/10403) Fix some docs that were showing up weirdly in generated api docs [@kategengler](https://github.com/kategengler)
+- [#9514](https://github.com/ember-cli/ember-cli/pull/9514) [ENHANCEMENT] Use packager commands in `CONTRIBUTING.md` and `README.md` files in `app` and `addon` blueprints [@elwayman02](https://github.com/elwayman02)
+
+Thank you to all who took the time to contribute!
+
+## v5.4.2
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.4.1...v5.4.2)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.4.1...v5.4.2)
+
+#### Changelog
+
+- [#10458](https://github.com/ember-cli/ember-cli/pull/10458) Use Lodash's `_.template` instead of `lodash.template` package [@gorner](https://github.com/gorner)
+
+Thank you to all who took the time to contribute!
+
+## v5.4.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.4.0...v5.4.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.4.0...v5.4.1)
+
+#### Changelog
+
+- [#10402](https://github.com/ember-cli/ember-cli/pull/10402) [BUGFIX release] use import type in helpers/index.ts :: typechecking in new apps otherwise fails [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v5.4.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.3.0...v5.4.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.3.0...v5.4.0)
+
+#### Changelog
+
+- [#10388](https://github.com/ember-cli/ember-cli/pull/10388) [CLEANUP] Drop support for Node v16 [@Shishouille](https://github.com/Shishouille)
+- [#10345](https://github.com/ember-cli/ember-cli/pull/10345) [BUGFIX beta] App blueprint may not have explicit-any in ember-data types [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10351](https://github.com/ember-cli/ember-cli/pull/10351) [ENHANCEMENT] Remove `ember-lts-4.4` scenario from `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10352](https://github.com/ember-cli/ember-cli/pull/10352) [ENHANCEMENT] Add official support for Node.js v20 [@bertdeblock](https://github.com/bertdeblock)
+- [#10353](https://github.com/ember-cli/ember-cli/pull/10353) [ENHANCEMENT] Remove all telemetry [@bertdeblock](https://github.com/bertdeblock)
+- [#10354](https://github.com/ember-cli/ember-cli/pull/10354) [INTERNAL] Remove `@babel/core` as a dependency [@bertdeblock](https://github.com/bertdeblock)
+- [#10368](https://github.com/ember-cli/ember-cli/pull/10368) [ENHANCEMENT] Streamline package-manager CLI options [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v5.3.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.2.0...v5.3.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.2.0...v5.3.0)
+
+#### Changelog
+
+- [#10346](https://github.com/ember-cli/ember-cli/pull/10346) [BUGFIX release] App blueprint may not have explicit-any in ember-data types  [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10349](https://github.com/ember-cli/ember-cli/pull/10349) [BUGFIX release] Add `@babel/core` to `app` and `addon` blueprints [@bertdeblock](https://github.com/bertdeblock)
+- [#10162](https://github.com/ember-cli/ember-cli/pull/10162) [ENHANCEMENT] Deprecate `outputPaths` build option [@bertdeblock](https://github.com/bertdeblock)
+- [#10187](https://github.com/ember-cli/ember-cli/pull/10187) [ENHANCEMENT] Remove Node version checking [@bertdeblock](https://github.com/bertdeblock)
+- [#10249](https://github.com/ember-cli/ember-cli/pull/10249) Serve app on root url without trailing slash [@mmun](https://github.com/mmun)
+- [#10311](https://github.com/ember-cli/ember-cli/pull/10311) [ENHANCEMENT] Add v4.12 LTS scenario to `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10316](https://github.com/ember-cli/ember-cli/pull/10316) [BUGFIX] Remove `auto` as a possible value for `locationType` in `config` declaration [@bertdeblock](https://github.com/bertdeblock)
+- [#10319](https://github.com/ember-cli/ember-cli/pull/10319) Use pnpm-action from org [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10331](https://github.com/ember-cli/ember-cli/pull/10331) [ENHANCEMENT] Exclude `@ember/string` from `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10335](https://github.com/ember-cli/ember-cli/pull/10335) Update ci.yml to trigger on merge queue [@locks](https://github.com/locks)
+- [#10337](https://github.com/ember-cli/ember-cli/pull/10337) remove EMBER_CLI_PNPM [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10338](https://github.com/ember-cli/ember-cli/pull/10338) [INTERNAL] Remove `PNPM` experiment from CI matrix [@bertdeblock](https://github.com/bertdeblock)
+- [#10341](https://github.com/ember-cli/ember-cli/pull/10341) [ENHANCEMENT] Remove reference to `ember-mocha` in `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#8578](https://github.com/ember-cli/ember-cli/pull/8578) By default make ember test to pick ports automatically [@SparshithNR](https://github.com/SparshithNR)
+
+Thank you to all who took the time to contribute!
+
+## v5.2.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.2.0...v5.2.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.2.0...v5.2.1)
+
+#### Changelog
+
+- [#10346](https://github.com/ember-cli/ember-cli/pull/10346) [BUGFIX release] App blueprint may not have explicit-any in ember-data types  [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10349](https://github.com/ember-cli/ember-cli/pull/10349) [BUGFIX release] Add `@babel/core` to `app` and `addon` blueprints [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v5.2.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.1.0...v5.2.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.1.0...v5.2.0)
+
+#### Changelog
+
+- [#10283](https://github.com/ember-cli/ember-cli/pull/10283) Refactor `--typescript` support in blueprints [@simonihmig](https://github.com/simonihmig)
+
+Thank you to all who took the time to contribute!
+
+## v5.1.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v5.0.0...v5.1.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v5.0.0...v5.1.0)
+
+#### Changelog
+
+- [#10300](https://github.com/ember-cli/ember-cli/pull/10300) [BUGFIX] Do not try to wire up Testem unless a test framework is detected [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10256](https://github.com/ember-cli/ember-cli/pull/10256) [ENHANCEMENT] Align `hbs` templates generated by `app` blueprint with Prettier defaults [@jelhan](https://github.com/jelhan)
+- [#10276](https://github.com/ember-cli/ember-cli/pull/10276) [BUGFIX] Widen peer dependency range for ember-source [@jrjohnson](https://github.com/jrjohnson)
+- [#10279](https://github.com/ember-cli/ember-cli/pull/10279) Updated ember-welcome-page to v7.0.2 [@ijlee2](https://github.com/ijlee2)
+- [#10287](https://github.com/ember-cli/ember-cli/pull/10287) Implementation of RFC 907 - pnpm support [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v5.0.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.12.1...v5.0.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.12.1...v5.0.0)
+
+#### Changelog
+
+- [#10244](https://github.com/ember-cli/ember-cli/pull/10244) Update ember-cli-preprocess-registry and add ember-cli-clean-css to the blueprints [@kategengler](https://github.com/kategengler)
+- [#10276](https://github.com/ember-cli/ember-cli/pull/10276) Widen peer dependency range for ember-source [@jrjohnson](https://github.com/jrjohnson)
+- [#10019](https://github.com/ember-cli/ember-cli/pull/10019) [CLEANUP] Drop support for the `baseURL` environment option [@bertdeblock](https://github.com/bertdeblock)
+- [#10106](https://github.com/ember-cli/ember-cli/pull/10106) [CLEANUP] Remove deprecated `PACKAGER` experiment [@bertdeblock](https://github.com/bertdeblock)
+- [#10175](https://github.com/ember-cli/ember-cli/pull/10175) [CLEANUP] Clean up `blacklist-whitelist-build-options` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10176](https://github.com/ember-cli/ember-cli/pull/10176) [CLEANUP] Clean up `vendor-shim-blueprint` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10177](https://github.com/ember-cli/ember-cli/pull/10177) [CLEANUP] Clean up `ember-cli-jshint-support` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10178](https://github.com/ember-cli/ember-cli/pull/10178) [CLEANUP] Remove all Bower entries from ignore files in `app` and `addon` blueprints [@bertdeblock](https://github.com/bertdeblock)
+- [#10182](https://github.com/ember-cli/ember-cli/pull/10182) [CLEANUP] Clean up `project.bower-dependencies` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10183](https://github.com/ember-cli/ember-cli/pull/10183) [CLEANUP] Clean up `project.bower-directory` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10184](https://github.com/ember-cli/ember-cli/pull/10184) [CLEANUP] Clean up `blueprint.add-bower-package-to-project` and `blueprint.add-bower-packages-to-project` deprecations [@bertdeblock](https://github.com/bertdeblock)
+- [#10185](https://github.com/ember-cli/ember-cli/pull/10185) [CLEANUP] Drop support for the `EMBER_CLI_ERROR_ON_INVALID_ADDON` env flag [@bertdeblock](https://github.com/bertdeblock)
+- [#10186](https://github.com/ember-cli/ember-cli/pull/10186) [CLEANUP] Drop support for installing Bower packages [@bertdeblock](https://github.com/bertdeblock)
+- [#10193](https://github.com/ember-cli/ember-cli/pull/10193) [CLEANUP] Drop support for `ember-cli-babel` v5 and v6 [@bertdeblock](https://github.com/bertdeblock)
+- [#10194](https://github.com/ember-cli/ember-cli/pull/10194) [CLEANUP] Drop support for `ember-cli-shims` [@bertdeblock](https://github.com/bertdeblock)
+- [#10195](https://github.com/ember-cli/ember-cli/pull/10195) [CLEANUP] Remove automatic inclusion of jQuery in legacy Ember versions [@bertdeblock](https://github.com/bertdeblock)
+- [#10196](https://github.com/ember-cli/ember-cli/pull/10196) [INTERNAL] Remove unused private `_legacyAddonCompile` method on `EmberApp` class [@bertdeblock](https://github.com/bertdeblock)
+- [#10197](https://github.com/ember-cli/ember-cli/pull/10197) [CLEANUP] Remove default `minifyJS` options [@bertdeblock](https://github.com/bertdeblock)
+- [#10211](https://github.com/ember-cli/ember-cli/pull/10211) Automate output repos [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#10217](https://github.com/ember-cli/ember-cli/pull/10217) [CLEANUP] Remove `ember-resolver` fallback [@bertdeblock](https://github.com/bertdeblock)
+- [#10218](https://github.com/ember-cli/ember-cli/pull/10218) [CLEANUP] Drop support for including `handlebars.js` via Bower [@bertdeblock](https://github.com/bertdeblock)
+- [#10219](https://github.com/ember-cli/ember-cli/pull/10219) [CLEANUP] Drop support for npm versions below v5.7.1 [@bertdeblock](https://github.com/bertdeblock)
+- [#10220](https://github.com/ember-cli/ember-cli/pull/10220) [CLEANUP] Drop support for including Ember builds via Bower [@bertdeblock](https://github.com/bertdeblock)
+- [#10221](https://github.com/ember-cli/ember-cli/pull/10221) [CLEANUP] Clean up `building-bower-packages` deprecation [@bertdeblock](https://github.com/bertdeblock)
+- [#10222](https://github.com/ember-cli/ember-cli/pull/10222) [CLEANUP] Drop support for Node v14 [@bertdeblock](https://github.com/bertdeblock)
+- [#10223](https://github.com/ember-cli/ember-cli/pull/10223) [CLEANUP] Drop support for finding addons by their `index.js` name [@bertdeblock](https://github.com/bertdeblock)
+- [#10224](https://github.com/ember-cli/ember-cli/pull/10224) [CLEANUP] Drop support for checking if Bower components are installed [@bertdeblock](https://github.com/bertdeblock)
+- [#10225](https://github.com/ember-cli/ember-cli/pull/10225) [CLEANUP] Drop support for the `EMBER_CLI_IGNORE_ADDON_NAME_MISMATCH` env flag [@bertdeblock](https://github.com/bertdeblock)
+- [#10226](https://github.com/ember-cli/ember-cli/pull/10226) [INTERNAL] Remove all remaining Bower references [@bertdeblock](https://github.com/bertdeblock)
+- [#10227](https://github.com/ember-cli/ember-cli/pull/10227) [INTERNAL] Remove JSHint reference [@bertdeblock](https://github.com/bertdeblock)
+- [#10229](https://github.com/ember-cli/ember-cli/pull/10229) Update blueprint ignore files [@bertdeblock](https://github.com/bertdeblock)
+- [#10231](https://github.com/ember-cli/ember-cli/pull/10231) [INTERNAL] Remove npm version check in `ember new` test [@bertdeblock](https://github.com/bertdeblock)
+- [#10232](https://github.com/ember-cli/ember-cli/pull/10232) [CLEANUP] Remove Babel fallback for addons [@bertdeblock](https://github.com/bertdeblock)
+- [#10245](https://github.com/ember-cli/ember-cli/pull/10245) change guarding condition for output repos [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v4.12.3
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.12.2...v4.12.3)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.12.2...v4.12.3)
+
+#### Changelog
+
+- [#10458](https://github.com/ember-cli/ember-cli/pull/10458) Use Lodash's `_.template` instead of `lodash.template` package [@gorner](https://github.com/gorner)
+
+Thank you to all who took the time to contribute!
+
+## v4.12.2
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.12.1...v4.12.2)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.12.1...v4.12.2)
+
+#### Changelog
+
+- [#10314](https://github.com/ember-cli/ember-cli/pull/10314) [BUGFIX] Do not try to wire up Testem unless a test framework is dete… [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v4.12.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.12.0...v4.12.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.12.0...v4.12.1)
+
+#### Changelog
+
+- [#10251](https://github.com/ember-cli/ember-cli/pull/10251) [BUGFIX release] Remove `stylelint-config-prettier` from `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v4.12.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.11.0...v4.12.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.11.0...v4.12.0)
+
+#### Changelog
+
+- [#10039](https://github.com/ember-cli/ember-cli/pull/10039) [CLEANUP] Remove unused test fixtures [@bertdeblock](https://github.com/bertdeblock)
+- [#10040](https://github.com/ember-cli/ember-cli/pull/10040) [CLEANUP] Remove MU-related debug code [@bertdeblock](https://github.com/bertdeblock)
+- [#10091](https://github.com/ember-cli/ember-cli/pull/10091) [BUGFIX] Fix looking up the default blueprint for scoped addons [@GendelfLugansk](https://github.com/GendelfLugansk)
+- [#10107](https://github.com/ember-cli/ember-cli/pull/10107) [INTERNAL] Remove old `uninstall:npm` command [@bertdeblock](https://github.com/bertdeblock)
+- [#10122](https://github.com/ember-cli/ember-cli/pull/10122) [ENHANCEMENT] Add Stylelint setup to `app` and `addon` blueprints [RFC 814] [@bmish](https://github.com/bmish)
+- [#10142](https://github.com/ember-cli/ember-cli/pull/10142) [ENHANCEMENT] Update ESLint to v8 in `app` and `addon` blueprints [@bertdeblock](https://github.com/bertdeblock)
+- [#10157](https://github.com/ember-cli/ember-cli/pull/10157) [ENHANCEMENT] Exclude `ember-cli-terser` when generating apps using the `--embroider` option [@bertdeblock](https://github.com/bertdeblock)
+- [#10159](https://github.com/ember-cli/ember-cli/pull/10159) [ENHANCEMENT] Exclude `ember-cli-sri` when generating apps using the `--embroider` option [@bertdeblock](https://github.com/bertdeblock)
+- [#10161](https://github.com/ember-cli/ember-cli/pull/10161) [ENHANCEMENT] Remove NPM version checking [@bertdeblock](https://github.com/bertdeblock)
+- [#10166](https://github.com/ember-cli/ember-cli/pull/10166) [INTERNAL] Remove unused dependencies [@bertdeblock](https://github.com/bertdeblock)
+- [#10169](https://github.com/ember-cli/ember-cli/pull/10169) [ENHANCEMENT] Remove `app.import` comment in `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10172](https://github.com/ember-cli/ember-cli/pull/10172) [PERFORMANCE] Lazy require heavier packages [@bertdeblock](https://github.com/bertdeblock)
+- [#10173](https://github.com/ember-cli/ember-cli/pull/10173) [ENHANCEMENT] Don't delete the newly-generated app directory when an error occurs [@ef4](https://github.com/ef4)
+- [#10174](https://github.com/ember-cli/ember-cli/pull/10174) [INTERNAL] Clean up removal of `bower.json` and `package.json` files in `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10180](https://github.com/ember-cli/ember-cli/pull/10180) [ENHANCEMENT] Update `ember-welcome-page` to v7 in `app` blueprint [@ijlee2](https://github.com/ijlee2)
+- [#10188](https://github.com/ember-cli/ember-cli/pull/10188) [ENHANCEMENT] Update ESLint parser `ecmaVersion` to `latest` in `app` blueprint [@elwayman02](https://github.com/elwayman02)
+- [#10189](https://github.com/ember-cli/ember-cli/pull/10189) [ENHANCEMENT] Add v4.8 LTS to `addon` blueprint - Remove v3.28 LTS and `ember-classic` scenario [@bertdeblock](https://github.com/bertdeblock)
+- [#10192](https://github.com/ember-cli/ember-cli/pull/10192) [BUGFIX] The `addon` command should throw when no addon name is provided [@bertdeblock](https://github.com/bertdeblock)
+- [#10198](https://github.com/ember-cli/ember-cli/pull/10198) [INTERNAL] Output TypeScript apps and addons for StackBlitz [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+Thank you to all who took the time to contribute!
+
+## v4.11.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.10.0...v4.11.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.10.0...v4.11.0)
+
+#### Changelog
+
+- [#10103](https://github.com/ember-cli/ember-cli/pull/10103) Update `markdown-it-terminal` to v0.4.0 (resolve `markdown-it` vulnerability) [@bertdeblock](https://github.com/bertdeblock)
+- [#10109](https://github.com/ember-cli/ember-cli/pull/10109) [RFC 811] Add `ember-modifier` dependency to app blueprint [@SergeAstapov](https://github.com/SergeAstapov)
+- [#10110](https://github.com/ember-cli/ember-cli/pull/10110) [RFC 812] Add `tracked-built-ins` dependency to app blueprint [@SergeAstapov](https://github.com/SergeAstapov)
+
+Thank you to all who took the time to contribute!
+
+## v4.10.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.9.2...v4.10.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.9.2...v4.10.0)
+
+#### Changelog
+
+- [#10048](https://github.com/ember-cli/ember-cli/pull/10048) Make addAddonsToProject support creating a new project with custom target directory [@simonihmig](https://github.com/simonihmig)
+- [#10054](https://github.com/ember-cli/ember-cli/pull/10054) [ENHANCEMENT] Conditionally apply ESLint parser options in `app` and `addon` blueprints [@Windvis](https://github.com/Windvis)
+- [#10060](https://github.com/ember-cli/ember-cli/pull/10060) [ENHANCEMENT] Replace `eslint-plugin-node` with `eslint-plugin-n` in blueprints [@Windvis](https://github.com/Windvis)
+- [#10062](https://github.com/ember-cli/ember-cli/pull/10062) [ENHANCEMENT] Update Prettier config in blueprints to only use single quotes for `.js` and `.ts` files [@Windvis](https://github.com/Windvis)
+- [#10132](https://github.com/ember-cli/ember-cli/pull/10132) Add @ember/string as a dependency of projects [@kategengler](https://github.com/kategengler)
+
+Thank you to all who took the time to contribute!
+
+## v4.9.2
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.9.1...v4.9.2)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.9.1...v4.9.2)
+
+#### Changelog
+
+- [#10108](https://github.com/ember-cli/ember-cli/pull/10108) [BUGFIX release] Correctly instantiate server watcher [@bertdeblock](https://github.com/bertdeblock)
+
+## v4.9.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.9.0...v4.9.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.9.0...v4.9.1)
+
+#### Changelog
+
+- [#10101](https://github.com/ember-cli/ember-cli/pull/10101) [BUGFIX release] Correctly instantiate `Watcher` instance when running `ember test --serve` [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v4.9.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.8.0...v4.9.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.8.0...v4.9.0)
+
+#### Changelog
+
+- [#10015](https://github.com/ember-cli/ember-cli/pull/10015) Update `glob` to v8 [@bertdeblock](https://github.com/bertdeblock)
+- [#10016](https://github.com/ember-cli/ember-cli/pull/10016) Fix indentation in `.ember-cli` file in `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10017](https://github.com/ember-cli/ember-cli/pull/10017) [ENHANCEMENT] Disable prototype extensions by default in `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10018](https://github.com/ember-cli/ember-cli/pull/10018) Trap unhandled failures [@ef4](https://github.com/ef4)
+- [#10020](https://github.com/ember-cli/ember-cli/pull/10020) [INTERNAL] Fix typos in `serve` command test [@bertdeblock](https://github.com/bertdeblock)
+- [#10021](https://github.com/ember-cli/ember-cli/pull/10021) [CLEANUP] Drop support for using `usePods: true` and the `--pod` flag simultaneously [@bertdeblock](https://github.com/bertdeblock)
+- [#10022](https://github.com/ember-cli/ember-cli/pull/10022) [ENHANCEMENT] Use `concurrently` instead of `npm-run-all` in `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10024](https://github.com/ember-cli/ember-cli/pull/10024) [ENHANCEMENT] Add `ember-source` to `peerDependencies` in `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10025](https://github.com/ember-cli/ember-cli/pull/10025) [ENHANCEMENT] Update NPM version constraints [@bertdeblock](https://github.com/bertdeblock)
+- [#10026](https://github.com/ember-cli/ember-cli/pull/10026) [ENHANCEMENT] Display info message when running the `lint:fix` script post blueprint generation [@bertdeblock](https://github.com/bertdeblock)
+- [#10038](https://github.com/ember-cli/ember-cli/pull/10038) Update `filesize` to v10 [@bertdeblock](https://github.com/bertdeblock)
+- [#10041](https://github.com/ember-cli/ember-cli/pull/10041) [INTERNAL] Remove end year from copyright notice [@bertdeblock](https://github.com/bertdeblock)
+- [#10049](https://github.com/ember-cli/ember-cli/pull/10049) [ENHANCEMENT] Remove the `config/environment.js` file from the `addon` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10050](https://github.com/ember-cli/ember-cli/pull/10050) [ENHANCEMENT] Remove `vendor` folder from `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#10051](https://github.com/ember-cli/ember-cli/pull/10051) [ENHANCEMENT] Move `ember-try.js` config file to `tests/dummy/config/ember-try.js` for addons [@bertdeblock](https://github.com/bertdeblock)
+- [#10053](https://github.com/ember-cli/ember-cli/pull/10053) Add support for node ESM addons [@hjdivad](https://github.com/hjdivad)
+- [#9824](https://github.com/ember-cli/ember-cli/pull/9824) [RFC 638] Interactive way to create new Ember apps and addons [@bertdeblock](https://github.com/bertdeblock)
+- [#9972](https://github.com/ember-cli/ember-cli/pull/9972) [ENHANCEMENT] Add support for `--typescript` flag to `app` and `addon` blueprints [@simonihmig](https://github.com/simonihmig)
+
+Thank you to all who took the time to contribute!
+
+## v4.8.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.7.0...v4.8.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.7.0...v4.8.0)
+
+#### Changelog
+
+- [#10014](https://github.com/ember-cli/ember-cli/pull/10014) [BUGFIX release] Make sure newly installed addons are discovered when running `ember install` [@bertdeblock](https://github.com/bertdeblock)
+- [#9920](https://github.com/ember-cli/ember-cli/pull/9920) [BUGFIX] Make sure a blueprint’s options object and project instance are always available for all public hooks [@bertdeblock](https://github.com/bertdeblock)
+- [#9945](https://github.com/ember-cli/ember-cli/pull/9945) [ENHANCEMENT/BREAKING] Add Node v18 to `engines` in `app` and `addon` blueprint (removes support for Node v17) [@bertdeblock](https://github.com/bertdeblock)
+- [#9946](https://github.com/ember-cli/ember-cli/pull/9946) [INTERNAL] Unskip `package-info-cache` tests [@bertdeblock](https://github.com/bertdeblock)
+- [#9951](https://github.com/ember-cli/ember-cli/pull/9951) Update `js-yaml` to v4 [@bertdeblock](https://github.com/bertdeblock)
+- [#9952](https://github.com/ember-cli/ember-cli/pull/9952) Update `walk-sync` to v3 [@bertdeblock](https://github.com/bertdeblock)
+- [#9971](https://github.com/ember-cli/ember-cli/pull/9971) Add Ember 4.4 LTS to addon blueprint, remove 3.24 [@simonihmig](https://github.com/simonihmig)
+- [#9975](https://github.com/ember-cli/ember-cli/pull/9975) [ENHANCEMENT] Fix `prefer-const` lint violations in `app` and `addon` blueprints [@bmish](https://github.com/bmish)
+- [#9987](https://github.com/ember-cli/ember-cli/pull/9987) [BUGFIX] Handle rebuild failures without exiting [@bendemboski](https://github.com/bendemboski)
+- [#9988](https://github.com/ember-cli/ember-cli/pull/9988) [BUGFIX] - Address npm-run-all and Yarn 3 conflict & Removed warning [@christianarty](https://github.com/christianarty)
+
+Thank you to all who took the time to contribute!
+
+## v4.7.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.6.0...v4.7.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.6.0...v4.7.0)
+
+#### Changelog
+
+- [#10009](https://github.com/ember-cli/ember-cli/pull/10009) [BUGFIX] Handle rebuild failures without exiting [@bendemboski](https://github.com/bendemboski)
+
+Thank you to all who took the time to contribute!
+
+## v4.6.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.5.0...v4.6.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.5.0...v4.6.0)
+
+#### Changelog
+
+- [#9890](https://github.com/ember-cli/ember-cli/pull/9890) Make sure addons are discovered only once [@wagenet](https://github.com/wagenet)
+- [#9770](https://github.com/ember-cli/ember-cli/pull/9770) Include the addon’s name in the warning when a core command is overridden [@davecombs](https://github.com/davecombs)
+- [#9863](https://github.com/ember-cli/ember-cli/pull/9863) [INTERNAL] Add `.prettierignore` file to Ember CLI repo [@bertdeblock](https://github.com/bertdeblock)
+- [#9872](https://github.com/ember-cli/ember-cli/pull/9872) [INTERNAL] Use native classes for tasks in test suite [@bertdeblock](https://github.com/bertdeblock)
+- [#9885](https://github.com/ember-cli/ember-cli/pull/9885) [CLEANUP] Remove `ie 11` from default targets [@bertdeblock](https://github.com/bertdeblock)
+- [#9898](https://github.com/ember-cli/ember-cli/pull/9898) Remove deprecated `addonJsFiles` method on `addon` model [@bertdeblock](https://github.com/bertdeblock)
+- [#9899](https://github.com/ember-cli/ember-cli/pull/9899) Remove deprecated internal `silent` error [@bertdeblock](https://github.com/bertdeblock)
+- [#9900](https://github.com/ember-cli/ember-cli/pull/9900) Remove unused CLI error class [@bertdeblock](https://github.com/bertdeblock)
+- [#9902](https://github.com/ember-cli/ember-cli/pull/9902) Remove support for `ember-cli-inject-live-reload` < v1.10.0 [@bertdeblock](https://github.com/bertdeblock)
+- [#9903](https://github.com/ember-cli/ember-cli/pull/9903) Deprecate `vendor-shim` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#9904](https://github.com/ember-cli/ember-cli/pull/9904) Update Node compatibility warning [@bertdeblock](https://github.com/bertdeblock)
+- [#9906](https://github.com/ember-cli/ember-cli/pull/9906) Drop support for Node v12 [@bertdeblock](https://github.com/bertdeblock)
+- [#9907](https://github.com/ember-cli/ember-cli/pull/9907) Remove ESLint config file from `server` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#9908](https://github.com/ember-cli/ember-cli/pull/9908) Remove support for finding an addon by its unscoped name [@bertdeblock](https://github.com/bertdeblock)
+- [#9909](https://github.com/ember-cli/ember-cli/pull/9909) Deprecate support for `ember-cli-jshint` [@bertdeblock](https://github.com/bertdeblock)
+- [#9917](https://github.com/ember-cli/ember-cli/pull/9917) update beta deps [@kellyselden](https://github.com/kellyselden)
+- [#9919](https://github.com/ember-cli/ember-cli/pull/9919) Clean up `ember-addon` object in package file when destroying an in-repo addon [@bertdeblock](https://github.com/bertdeblock)
+- [#9935](https://github.com/ember-cli/ember-cli/pull/9935) Update dev changelog script [@kellyselden](https://github.com/kellyselden)
+- [#9938](https://github.com/ember-cli/ember-cli/pull/9938) [INTERNAL] Fix internal `sequence` util [@bertdeblock](https://github.com/bertdeblock)
+- [#9939](https://github.com/ember-cli/ember-cli/pull/9939) Update `fs-extra` to v10 [@bertdeblock](https://github.com/bertdeblock)
+- [#9937](https://github.com/ember-cli/ember-cli/pull/9937) [INTERNAL] Remove old `deprecate` utility [@bertdeblock](https://github.com/bertdeblock)
+- [#9941](https://github.com/ember-cli/ember-cli/pull/9941) Update `filesize` to v9 [@bertdeblock](https://github.com/bertdeblock)
+- [#9942](https://github.com/ember-cli/ember-cli/pull/9942) Update `isbinaryfile` to v5 [@bertdeblock](https://github.com/bertdeblock)
+- [#9944](https://github.com/ember-cli/ember-cli/pull/9944) Add support for Node v18 [@ddzz](https://github.com/ddzz)
+- [#9947](https://github.com/ember-cli/ember-cli/pull/9947) [DOC] Update EOL date for Node v16 in `Node Support` doc [@bertdeblock](https://github.com/bertdeblock)
+- [#9953](https://github.com/ember-cli/ember-cli/pull/9953) Update `resolve-package-path` to v4 [@bertdeblock](https://github.com/bertdeblock)
+- [#9954](https://github.com/ember-cli/ember-cli/pull/9954) Update `jsdom` to v20 [@bertdeblock](https://github.com/bertdeblock)
+- [#9969](https://github.com/ember-cli/ember-cli/pull/9969) update ember source beta [@kellyselden](https://github.com/kellyselden)
+
+Thank you to all who took the time to contribute!
+
+## v4.5.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.4.0...v4.5.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.4.0...v4.5.0)
+
+#### Changelog
+
+- [#9760](https://github.com/ember-cli/ember-cli/pull/9760) Add `timeout-minutes` to GitHub CI jobs in `app` and `addon` blueprints [@mansona](https://github.com/mansona)
+- [#9777](https://github.com/ember-cli/ember-cli/pull/9777) [DOC] Add bower note [@jenweber](https://github.com/jenweber)
+- [#9778](https://github.com/ember-cli/ember-cli/pull/9778) Prune lodash dependencies [@locks](https://github.com/locks)
+- [#9785](https://github.com/ember-cli/ember-cli/pull/9785) Generate correct directory name in `README.md` and `CONTRIBUTING.md` files [@bertdeblock](https://github.com/bertdeblock)
+- [#9805](https://github.com/ember-cli/ember-cli/pull/9805) Add Node v16 to `Node Support` docs [@bertdeblock](https://github.com/bertdeblock)
+- [#9823](https://github.com/ember-cli/ember-cli/pull/9823) [RFC 801] Deprecate `blacklist` and `whitelist` build options [@bertdeblock](https://github.com/bertdeblock)
+- [#9825](https://github.com/ember-cli/ember-cli/pull/9825) Remove `ember-export-application-global` addon from `app` blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#9848](https://github.com/ember-cli/ember-cli/pull/9848) Update `ember-cli-dependency-checker` to v3.3.1 [@gnclmorais](https://github.com/gnclmorais)
+- [#9857](https://github.com/ember-cli/ember-cli/pull/9857) Use `createBuilder` instead of deprecated `buildOutput` in test suite [@geneukum](https://github.com/geneukum)
+- [#9858](https://github.com/ember-cli/ember-cli/pull/9858) Remove `EXTEND_PROTOTYPES` object in the app's `config/environment.js` file [@bertdeblock](https://github.com/bertdeblock)
+- [#9859](https://github.com/ember-cli/ember-cli/pull/9859) Update `git.io` URLs [@bertdeblock](https://github.com/bertdeblock)
+- [#9860](https://github.com/ember-cli/ember-cli/pull/9860) Add inline comment RE: `runningTests` variable [@bertdeblock](https://github.com/bertdeblock)
+- [#9886](https://github.com/ember-cli/ember-cli/pull/9886) Remove deletion of `@ember/jquery` in addon blueprint [@bertdeblock](https://github.com/bertdeblock)
+- [#9906](https://github.com/ember-cli/ember-cli/pull/9906) Drop support for Node v12 [@bertdeblock](https://github.com/bertdeblock)
+- [#9909](https://github.com/ember-cli/ember-cli/pull/9909) Deprecate support for `ember-cli-jshint` [@bertdeblock](https://github.com/bertdeblock)
+- [#9914](https://github.com/ember-cli/ember-cli/pull/9914) Temporarily skip failing ember new test for npm versions <= v6.0.0 [@bertdeblock](https://github.com/bertdeblock)
+- [#9770](https://github.com/ember-cli/ember-cli/pull/9770) Include the addon’s name in the warning when a core command is overridden [@davecombs](https://github.com/davecombs)
+- [#9890](https://github.com/ember-cli/ember-cli/pull/9890) Make sure addons are discovered only once [@wagenet](https://github.com/wagenet)
+- [#9898](https://github.com/ember-cli/ember-cli/pull/9898) Remove deprecated `addonJsFiles` method on `addon` model [@bertdeblock](https://github.com/bertdeblock)
+- [#9900](https://github.com/ember-cli/ember-cli/pull/9900) Remove unused CLI error class [@bertdeblock](https://github.com/bertdeblock)
+- [#9917](https://github.com/ember-cli/ember-cli/pull/9917) update beta deps [@kellyselden](https://github.com/kellyselden)
+- [#9919](https://github.com/ember-cli/ember-cli/pull/9919) Clean up `ember-addon` object in package file when destroying an in-repo addon [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v4.4.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.3.0...v4.4.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.3.0...v4.4.0)
+
+#### Changelog
+
+- [#9611](https://github.com/ember-cli/ember-cli/pull/9611) use more standard markdown for addon readme [@mansona](https://github.com/mansona)
+- [#9818](https://github.com/ember-cli/ember-cli/pull/9818) Update actions/checkout action to v3 [@SergeAstapov](https://github.com/SergeAstapov)
+- [#9819](https://github.com/ember-cli/ember-cli/pull/9819) Update actions/setup-node action to v3 [@SergeAstapov](https://github.com/SergeAstapov)
+- [#9822](https://github.com/ember-cli/ember-cli/pull/9822) Update `since.available` and `since.enabled` versions for Bower deprecations [@bertdeblock](https://github.com/bertdeblock)
+- [#9850](https://github.com/ember-cli/ember-cli/pull/9850) Fix contents of addon `.gitignore` file [@bertdeblock](https://github.com/bertdeblock)
+
+Thank you to all who took the time to contribute!
+
+## v4.3.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.2.0...v4.3.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.2.0...v4.3.0)
+
+#### Changelog
+
+- [#9707](https://github.com/ember-cli/ember-cli/pull/9707) [RFC 772] Deprecate Bower support [@bertdeblock](https://github.com/bertdeblock)
+- [#9387](https://github.com/ember-cli/ember-cli/pull/9387) Add support for specifying a path for the generate command [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#9638](https://github.com/ember-cli/ember-cli/pull/9638) Update ember-cli's own dependencies to latest [@rwjblue](https://github.com/rwjblue)
+- [#9680](https://github.com/ember-cli/ember-cli/pull/9680) Ignore default folder name used by broccoli-debug [@notmessenger](https://github.com/notmessenger)
+- [#9683](https://github.com/ember-cli/ember-cli/pull/9683) chore: replace json-stable-stringify with safe-stable-stringify [@BridgeAR](https://github.com/BridgeAR)
+- [#9769](https://github.com/ember-cli/ember-cli/pull/9769) Update markdown-it to v12.3.2 to address vulnerabiliity [@locks](https://github.com/locks)
+- [#9781](https://github.com/ember-cli/ember-cli/pull/9781) [ENHANCEMENT] Remove `X-UA-Compatible` meta tag for IE browser [@bobisjan](https://github.com/bobisjan)
+- [#9790](https://github.com/ember-cli/ember-cli/pull/9790) Upgrade broccoli-merge-trees [@locks](https://github.com/locks)
+- [#9803](https://github.com/ember-cli/ember-cli/pull/9803) [RFC 637] Customizable test setups [@bertdeblock](https://github.com/bertdeblock)
+- [#9804](https://github.com/ember-cli/ember-cli/pull/9804) Fix formatting of CI file in app and addon blueprints [@bertdeblock](https://github.com/bertdeblock)
+- [#9817](https://github.com/ember-cli/ember-cli/pull/9817) update beta deps [@kellyselden](https://github.com/kellyselden)
+- [#9830](https://github.com/ember-cli/ember-cli/pull/9830) update deps before release [@kellyselden](https://github.com/kellyselden)
+
+Thank you to all who took the time to contribute!
+
+## v4.2.0
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.1.1...v4.2.0)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.1.1...v4.2.0)
+
+#### Changelog
+
+- [#9681](https://github.com/ember-cli/ember-cli/pull/9681) Update URL to Ember CLI website everywhere [@bertdeblock](https://github.com/bertdeblock)
+- [#9726](https://github.com/ember-cli/ember-cli/pull/9726) Cancel stale workflows when starting a new one. [@rwjblue](https://github.com/rwjblue)
+- [#9731](https://github.com/ember-cli/ember-cli/pull/9731) Add an `assert` and a `deprecate` utility [@bertdeblock](https://github.com/bertdeblock)
+- [#9753](https://github.com/ember-cli/ember-cli/pull/9753) Upgrade to `ember-template-lint` v4 in blueprint [@bmish](https://github.com/bmish)
+
+Thank you to all who took the time to contribute!
+
+## v4.1.1
+
+#### Blueprint Changes
+
+- [`ember new` diff](https://github.com/ember-cli/ember-new-output/compare/v4.1.0...v4.1.1)
+- [`ember addon` diff](https://github.com/ember-cli/ember-addon-output/compare/v4.1.0...v4.1.1)
+
+#### Changelog
+
+- [#9737](https://github.com/ember-cli/ember-cli/pull/9737) Remove jQuery integration scenario from ember-try [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [#9739](https://github.com/ember-cli/ember-cli/pull/9739) Change blueprint to generate apps using 'history' location [@kategengler](https://github.com/kategengler)
+- [#9762](https://github.com/ember-cli/ember-cli/pull/9762) Update @embroider/* packages to 1.0.0. [@rwjblue](https://github.com/rwjblue)
+
+Thank you to all who took the time to contribute!
+
 ## v4.1.0
 
 #### Blueprint Changes

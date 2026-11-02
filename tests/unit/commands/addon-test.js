@@ -1,10 +1,9 @@
 'use strict';
 
-const expect = require('../../chai').expect;
+const { expect } = require('chai');
 const commandOptions = require('../../factories/command-options');
-const map = require('ember-cli-lodash-subset').map;
 const AddonCommand = require('../../../lib/commands/addon');
-const Blueprint = require('../../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const td = require('testdouble');
 
 describe('addon command', function () {
@@ -79,6 +78,12 @@ describe('addon command', function () {
     });
   });
 
+  it('throws when no addon name is provided', async function () {
+    expect(command.validateAndRun([])).to.be.rejectedWith(
+      'The `ember addon` command requires a name to be specified. For more details, run `ember help`.'
+    );
+  });
+
   it('registers blueprint options in beforeRun', function () {
     td.replace(Blueprint, 'lookup', td.function());
 
@@ -87,6 +92,6 @@ describe('addon command', function () {
     });
 
     command.beforeRun(['addon']);
-    expect(map(command.availableOptions, 'name')).to.contain('custom-blueprint-option');
+    expect(command.availableOptions.map(({ name }) => name)).to.contain('custom-blueprint-option');
   });
 });

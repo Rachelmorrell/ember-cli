@@ -3,6 +3,10 @@
 const symlinkOrCopySync = require('symlink-or-copy').sync;
 const path = require('path');
 const fs = require('fs-extra');
+// eslint-disable-next-line n/no-unpublished-require
+const tmp = require('tmp-promise');
+const { execa } = require('execa');
+
 const runCommand = require('./run-command');
 const hasGlobalYarn = require('../helpers/has-global-yarn');
 
@@ -34,7 +38,7 @@ function handleResult(result) {
 function applyCommand(command, name /*, ...flags*/) {
   let flags = [].slice.call(arguments, 2, arguments.length);
   let binaryPath = path.resolve(path.join(__dirname, '..', '..', 'bin', 'ember'));
-  let args = [binaryPath, command, name, '--disable-analytics', '--watcher=node', '--skip-git', runCommandOptions];
+  let args = [binaryPath, command, name, '--watcher=node', '--skip-git', runCommandOptions];
 
   flags.forEach(function (flag) {
     args.splice(2, 0, flag);
@@ -59,14 +63,19 @@ function applyCommand(command, name /*, ...flags*/) {
  * @return {Promise}  The result of the running the command
  */
 function createTestTargets(projectName, options) {
+  console.warn(`**********************************************
+**  DO NOT USE createTestTargets ANY MORE!  **
+**********************************************
+
+Use createAndInstallTestTargets() which doesn't use a complicated packageCache system
+and relies on the pnpm store for caching instead.`);
+
   let outputDir = quickTemp.makeOrReuse(dirs, projectName);
 
   options = options || {};
   options.command = options.command || 'new';
 
-  return applyCommand(options.command, projectName, '--skip-npm', '--skip-bower', `--directory=${outputDir}`).catch(
-    handleResult
-  );
+  return applyCommand(options.command, projectName, '--skip-npm', `--directory=${outputDir}`).catch(handleResult);
 }
 
 /**
@@ -117,7 +126,41 @@ function cleanupRun(projectName) {
   quickTemp.remove(dirs, `${projectName}-clone`);
 }
 
+/**
+ *
+ * @param {string} projectName
+ * @param {string} options.command defaults to new
+ * @returns {Promise<{ result: string, path: string, cleanup: () => void }>} an object containing command result, path, and a cleanup function;
+ */
+async function createAndInstallTestTargets(projectName, options) {
+  let outputDir = await tmp.dir({ unsafeCleanup: true });
+
+  let command = options?.command ?? 'new';
+
+  let result = await applyCommand(command, projectName, '--skip-npm', `--directory=${outputDir.path}`);
+
+  // we need to link these packages before we try to run pnpm install so it always uses the current version of ember-cli and the sub-packages
+  for (let pkg of ['.', 'packages/app-blueprint', 'packages/addon-blueprint']) {
+    await execa('pnpm', ['link', path.join(__dirname, `../../${pkg}`)], {
+      preferLocal: true,
+      cwd: outputDir.path,
+    });
+  }
+
+  await execa('pnpm', ['install', '--prefer-offline'], {
+    preferLocal: true,
+    cwd: outputDir.path,
+  });
+
+  return {
+    result,
+    cleanup: outputDir.cleanup,
+    path: outputDir.path,
+  };
+}
+
 module.exports = {
+  createAndInstallTestTargets,
   createTestTargets,
   linkDependencies,
   teardownTestTargets,

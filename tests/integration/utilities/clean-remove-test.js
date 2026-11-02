@@ -1,8 +1,8 @@
 'use strict';
 
-const expect = require('../../chai').expect;
-const cleanRemove = require('../../../lib/utilities/clean-remove');
-const temp = require('temp');
+const { expect } = require('chai');
+const cleanRemove = require('@ember-tooling/blueprint-model/utilities/clean-remove');
+const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
 
@@ -13,7 +13,7 @@ describe('clean-remove', function () {
   let nestedPath = 'nested1/nested2';
 
   beforeEach(function () {
-    tempDir = temp.mkdirSync('clean-remove');
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'clean-remove-'));
     process.chdir(tempDir);
 
     fileInfo = {

@@ -1,10 +1,10 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const DefaultPackager = require('../../../../lib/broccoli/default-packager');
 const broccoliTestHelper = require('broccoli-test-helper');
 
-const buildOutput = broccoliTestHelper.buildOutput;
+const createBuilder = broccoliTestHelper.createBuilder;
 const createTempDir = broccoliTestHelper.createTempDir;
 
 describe('Default Packager: External', function () {
@@ -12,7 +12,6 @@ describe('Default Packager: External', function () {
 
   let EXTERNAL = {
     'addon-tree-output': {},
-    bower_components: {},
     vendor: {
       'auth0-js.js': '',
       'auth0-lock.js': '',
@@ -66,7 +65,8 @@ describe('Default Packager: External', function () {
       customTransformsMap,
     });
 
-    output = await buildOutput(defaultPackager.applyCustomTransforms(input.path()));
+    output = createBuilder(defaultPackager.applyCustomTransforms(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 

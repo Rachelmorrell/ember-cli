@@ -1,17 +1,108 @@
 'use strict';
 
 const processHelpString = require('../../helpers/process-help-string');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const path = require('path');
 const EOL = require('os').EOL;
-const MarkdownColor = require('../../../lib/utilities/markdown-color');
+const MarkdownColor = require('@ember-tooling/blueprint-model/utilities/markdown-color');
 const td = require('testdouble');
 
-let Blueprint = require('../../../lib/models/blueprint');
+let Blueprint = require('@ember-tooling/blueprint-model');
 
 describe('Blueprint', function () {
   afterEach(function () {
     td.reset();
+  });
+
+  describe('.removeTypes', function () {
+    it('returns input when passing javascript', async function () {
+      const output = await Blueprint.prototype.removeTypes('.js', 'const x = 1;\n');
+      expect(output).to.equal('const x = 1;\n');
+    });
+
+    it('strips types when converting ts', async function () {
+      const output = await Blueprint.prototype.removeTypes('.ts', 'const x: number = 1;\n');
+      expect(output).to.equal('const x = 1;\n');
+    });
+
+    it('stripes types when converting gts', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        'const x: number = 1;\n<template>Hello {{x}}!</template>\n'
+      );
+      expect(output).to.equal('const x = 1;\n<template>Hello {{x}}!</template>\n');
+    });
+
+    it('keeps imports used in templates when converting gts', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        `import { foo } from 'foo';
+import type { Bar } from 'bar';
+
+const bar: Bar = 'bar';
+
+<template>{{foo}} {{bar}}</template>
+`
+      );
+      expect(output).to.equal(`import { foo } from 'foo';
+
+const bar = 'bar';
+
+<template>{{foo}} {{bar}}</template>
+`);
+    });
+
+    it('can handle template-only gts', async function () {
+      const output = await Blueprint.prototype.removeTypes('.gts', '<template>Hello!</template>\n');
+      expect(output).to.equal('<template>Hello!</template>\n');
+    });
+
+    it('can handle multi-line template tag', async function () {
+      const output = await Blueprint.prototype.removeTypes('.gts', '<template>\nHello!\n</template>\n');
+      expect(output).to.equal('<template>\nHello!\n</template>\n');
+    });
+
+    it('can handle multiple template tags in one file', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        'const x = <template>Hello!</template>\nconst y = <template>World!</template>\n'
+      );
+      expect(output).to.equal('const x = <template>Hello!</template>\nconst y = <template>World!</template>\n');
+    });
+
+    it('works in class body', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        'const foo: number = 1;\nexport default class Bar extends Component {\n  <template>Hello {{foo}}</template>\n}\n'
+      );
+      expect(output).to.equal(
+        'const foo = 1;\nexport default class Bar extends Component {\n  <template>Hello {{foo}}</template>\n}\n'
+      );
+    });
+
+    it('can handle multi-byte characters', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        "const x: string = '💩';\n<template>Hello {{x}}!</template>\n"
+      );
+      expect(output).to.equal("const x = '💩';\n<template>Hello {{x}}!</template>\n");
+    });
+
+    it('can handle template tags as function argument', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        'await render(<template>Hello {{foo}}</template>);\n'
+      );
+      expect(output).to.equal('await render(<template>Hello {{foo}}</template>);\n');
+    });
+
+    it('can handle template tags as function argument, including newlines', async function () {
+      const output = await Blueprint.prototype.removeTypes(
+        '.gts',
+        'await render(\n  <template>Hello {{foo}}</template>\n);\n'
+      );
+      expect(output).to.equal('await render(<template>Hello {{foo}}</template>);\n');
+    });
   });
 
   describe('.mapFile', function () {
@@ -50,9 +141,6 @@ describe('Blueprint', function () {
       td.replace(Blueprint, '_existsSync', function (path) {
         return path.indexOf('package.json') === -1;
       });
-
-      td.replace(Blueprint, 'defaultLookupPaths');
-      td.when(Blueprint.defaultLookupPaths()).thenReturn([]);
 
       td.replace(Blueprint, 'load', function (blueprintPath) {
         return {
@@ -134,8 +222,10 @@ describe('Blueprint', function () {
 
         let output = blueprint.printBasicHelp();
 
-        let testString = processHelpString('\
-      \u001b[90m(overridden) my-blueprint\u001b[39m');
+        let testString = processHelpString(
+          '\
+      \u001b[90m(overridden) my-blueprint\u001b[39m'
+        );
 
         expect(output).to.equal(testString);
 
@@ -147,8 +237,10 @@ describe('Blueprint', function () {
 
         let output = blueprint.printBasicHelp();
 
-        let testString = processHelpString('\
-      my-blueprint command printed');
+        let testString = processHelpString(
+          '\
+      my-blueprint command printed'
+        );
 
         expect(output).to.equal(testString);
       });

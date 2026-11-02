@@ -1,16 +1,17 @@
 'use strict';
 
-const expect = require('../../chai').expect;
+const { expect } = require('chai');
 const EOL = require('os').EOL;
 const commandOptions = require('../../factories/command-options');
 const processHelpString = require('../../helpers/process-help-string');
 const MockProject = require('../../helpers/mock-project');
 const Task = require('../../../lib/models/task');
-const Blueprint = require('../../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const GenerateCommand = require('../../../lib/commands/generate');
 const td = require('testdouble');
 const ROOT = process.cwd();
 const { createTempDir } = require('broccoli-test-helper');
+const { ERRORS } = GenerateCommand;
 
 describe('generate command', function () {
   let input, options, command;
@@ -33,12 +34,17 @@ describe('generate command', function () {
       project,
 
       tasks: {
-        GenerateFromBlueprint: Task.extend({
-          project,
+        GenerateFromBlueprint: class extends Task {
+          init() {
+            super.init(...arguments);
+
+            this.project = project;
+          }
+
           run(options) {
             return Promise.resolve(options);
-          },
-        }),
+          }
+        },
       },
     });
 
@@ -50,6 +56,13 @@ describe('generate command', function () {
 
     process.chdir(ROOT);
     await input.dispose();
+  });
+
+  it('throws when the `--dummy` option is passed in a Vite project', async function () {
+    command.isViteProject = true;
+    await expect(command.validateAndRun(['controller', 'foo', '--dummy'])).to.be.rejectedWith(
+      'The `--dummy` option to `ember generate` is not supported in Vite-based projects.'
+    );
   });
 
   it('runs GenerateFromBlueprint but with null nodeModulesPath with npm', function () {
@@ -98,11 +111,7 @@ describe('generate command', function () {
 
   it('complains if no blueprint name is given', function () {
     return expect(command.validateAndRun([])).to.be.rejected.then((error) => {
-      expect(error.message).to.equal(
-        'The `ember generate` command requires a ' +
-          'blueprint name to be specified. ' +
-          'For more details, use `ember help`.'
-      );
+      expect(error.message).to.equal(ERRORS.UNKNOWN_BLUEPRINT_ERROR);
     });
   });
 

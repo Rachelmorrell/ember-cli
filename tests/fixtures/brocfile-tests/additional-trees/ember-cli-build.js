@@ -1,9 +1,9 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const Funnel = require('broccoli-funnel');
-const { isExperimentEnabled } = require('ember-cli/lib/experiments');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 
 module.exports = function (defaults) {
-  let app = new EmberApp(defaults, {});
+  const app = new EmberApp(defaults, {});
 
   let funnel = new Funnel('vendor', {
     srcDir: '/',

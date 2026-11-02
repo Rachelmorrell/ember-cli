@@ -1,38 +1,37 @@
-foo
-==============================================================================
+# foo
 
 [Short description of the addon.]
 
+## Compatibility
 
-Compatibility
-------------------------------------------------------------------------------
+- Ember.js v5.8 or above
+- Ember CLI v5.8 or above
+- Node.js v20 or above
 
-* Ember.js v3.24 or above
-* Ember CLI v3.24 or above
-* Node.js v12 or above
-
-
-Installation
-------------------------------------------------------------------------------
+## Installation
 
 ```
 ember install foo
 ```
 
-
-Usage
-------------------------------------------------------------------------------
+## Usage
 
 [Longer description of how to use the addon in apps.]
 
+> TODO: Document the package's public API.
+>
+> For each public api (including components, helpers, modifiers, and other apis) include:
+>
+> - The import path for a consumer (e.g. `import MyAddonsComponent from 'my-addon/components/my-addons-component'`)
+> - What it does
+> - Parameters/options
+> - Return value
+> - Example usage
 
-Contributing
-------------------------------------------------------------------------------
+## Contributing
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
-
-License
-------------------------------------------------------------------------------
+## License
 
 This project is licensed under the [MIT License](LICENSE.md).

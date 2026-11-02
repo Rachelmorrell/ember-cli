@@ -1,6 +1,5 @@
 const processHelpString = require('../../helpers/process-help-string');
-const versionUtils      = require('../../../lib/utilities/version-utils');
-var emberCLIVersion   = versionUtils.emberCLIVersion;
+const { emberCLIBareVersion } = require('../../../lib/utilities/version-utils');
 
 module.exports = {
   name: 'ember',
@@ -9,13 +8,13 @@ module.exports = {
   works: 'insideProject',
   availableOptions: [],
   anonymousOptions: ['<command (Default: help)>'],
-  version: emberCLIVersion(),
+  version: emberCLIBareVersion(),
   commands: [
     {
       name: 'addon',
       description: 'Generates a new folder structure for building an addon, complete with test harness.',
       aliases: [],
-      works: 'outsideProject',
+      works: 'everywhere',
       availableOptions: [
         {
           name: 'dry-run',
@@ -41,15 +40,8 @@ module.exports = {
         {
           name: 'skip-npm',
           default: false,
-          aliases: ['sn'],
+          aliases: ['sn', 'skip-install', 'si'],
           key: 'skipNpm',
-          required: false
-        },
-        {
-          name: 'skip-bower',
-          default: false,
-          aliases: ['sb'],
-          key: 'skipBower',
           required: false
         },
         {
@@ -60,9 +52,11 @@ module.exports = {
           required: false
         },
         {
-          name: 'yarn',
-          key: 'yarn',
-          required: false
+          aliases: [{ npm: 'npm' }, { pnpm: 'pnpm' }, { yarn: 'yarn' }],
+          key: 'packageManager',
+          name: 'package-manager',
+          required: false,
+          type: ['npm', 'pnpm', 'yarn'],
         },
         {
           name: 'directory',
@@ -77,42 +71,40 @@ module.exports = {
           required: false
         },
         {
+          name: 'lint-fix',
+          default: true,
+          key: 'lintFix',
+          required: false
+        },
+        {
           name: 'ci-provider',
           key: 'ciProvider',
-          type: ['travis', 'github'],
+          type: ['github', 'none'],
           default: 'github',
-          description: 'Installs the default CI blueprint. Either Travis or Github Actions is supported.',
+          description: 'Installs the optional default CI blueprint. Only Github Actions is supported at the moment.',
+          required: false
+        },
+        {
+          aliases: ['ts'],
+          default: false,
+          key: 'typescript',
+          name: 'typescript',
+          description: 'Set up the addon to use TypeScript',
+          required: false,
+        },
+        {
+          default: true,
+          description: 'Use GJS/GTS templates by default for generated components, tests, and route templates',
+          key: 'strict',
+          name: 'strict',
           required: false
         },
       ],
       anonymousOptions: ['<addon-name>']
     },
     {
-      name: 'asset-sizes',
-      description: 'Shows the sizes of your asset files.',
-      works: 'insideProject',
-      aliases: [],
-      anonymousOptions: [],
-      availableOptions: [
-        {
-          name: 'output-path',
-          default: 'dist/',
-          key: 'outputPath',
-          required: false,
-          aliases: ['o'],
-          type: 'Path'
-        },
-        {
-          default: false,
-          key: 'json',
-          name: 'json',
-          required: false
-        }
-      ]
-    },
-    {
       name: 'build',
-      description: 'Builds your app and places it into the output path (dist/ by default).',
+      description: 'Vestigial command in Vite-based projects. Use the `build` script from package.json instead.',
       aliases: ['b'],
       works: 'insideProject',
       availableOptions: [
@@ -129,31 +121,19 @@ module.exports = {
           required: false
         },
         {
-          name: 'output-path',
-          default: 'dist/',
-          aliases: ['o'],
-          key: 'outputPath',
-          required: false,
-          type: 'Path',
-        },
-        {
-          name: 'watch',
-          default: false,
-          aliases: ['w'],
-          key: 'watch',
-          required: false
-        },
-        {
-          name: 'watcher',
-          key: 'watcher',
-          required: false
-        },
-        {
           name: 'suppress-sizes',
           default: false,
           key: 'suppressSizes',
           required: false
-        }
+        },
+        {
+          name: 'output-path',
+          aliases: ['o'],
+          default: 'dist/',
+          key: 'outputPath',
+          required: false,
+          type: 'Path'
+        },
       ],
       anonymousOptions: []
     },
@@ -192,13 +172,6 @@ module.exports = {
           required: false
         },
         {
-          name: 'dummy',
-          default: false,
-          aliases: ['dum', 'id'],
-          key: 'dummy',
-          required: false
-        },
-        {
           name: 'in-repo-addon',
           default: null,
           aliases: ['in-repo', 'ir'],
@@ -210,6 +183,13 @@ module.exports = {
           default: null,
           description: 'Runs a blueprint against an in repo addon. A path is expected, relative to the root of the project.',
           key: 'in',
+          required: false
+        },
+        {
+          name: 'typescript',
+          aliases: ['ts'],
+          description: 'Specifically destroys the TypeScript output of the `generate` command. Run `--no-typescript` to instead target the JavaScript output.',
+          key: 'typescript',
           required: false
         }
       ],
@@ -250,13 +230,6 @@ module.exports = {
           required: false
         },
         {
-          name: 'dummy',
-          default: false,
-          aliases: ['dum', 'id'],
-          key: 'dummy',
-          required: false
-        },
-        {
           name: 'in-repo-addon',
           default: null,
           aliases: ['in-repo', 'ir'],
@@ -275,10 +248,20 @@ module.exports = {
           description: 'Runs a blueprint against an in repo addon. A path is expected, relative to the root of the project.',
           key: 'in',
           required: false
+        },
+        {
+          name: 'typescript',
+          aliases: ['ts'],
+          description: 'Generates a version of the blueprint written in TypeScript (if available).',
+          key: 'typescript',
+          required: false
         }
       ],
       anonymousOptions: ['<blueprint>'],
       availableBlueprints: [
+        {
+          'awesome-proj': []
+        },
         {
           'ember-cli': [
             {
@@ -311,14 +294,14 @@ module.exports = {
             },
             {
               name: 'http-mock',
-              description: 'Generates a mock api endpoint in /api prefix.',
+              description: '[Classic Only] Generates a mock api endpoint in /api prefix.',
               availableOptions: [],
               anonymousOptions: ['endpoint-path'],
               overridden: false
             },
             {
               name: 'http-proxy',
-              description: 'Generates a relative proxy to another server.',
+              description: '[Classic Only] Generates a relative proxy to another server.',
               availableOptions: [],
               anonymousOptions: ['local-path', 'remote-url'],
               overridden: false
@@ -339,14 +322,7 @@ module.exports = {
             },
             {
               name: 'server',
-              description: 'Generates a server directory for mocks and proxies.',
-              availableOptions: [],
-              anonymousOptions: ['name'],
-              overridden: false
-            },
-            {
-              name: 'vendor-shim',
-              description: 'Generates an ES6 module shim for global libraries.',
+              description: '[Classic Only] Generates a server directory for mocks and proxies.',
               availableOptions: [],
               anonymousOptions: ['name'],
               overridden: false
@@ -406,15 +382,8 @@ module.exports = {
         {
           name: 'skip-npm',
           default: false,
-          aliases: ['sn'],
+          aliases: ['sn', 'skip-install', 'si'],
           key: 'skipNpm',
-          required: false
-        },
-        {
-          name: 'skip-bower',
-          default: false,
-          aliases: ['sb'],
-          key: 'skipBower',
           required: false
         },
         {
@@ -431,9 +400,11 @@ module.exports = {
           required: false
         },
         {
-          name: 'yarn',
-          key: 'yarn',
-          required: false
+          aliases: [{ npm: 'npm' }, { pnpm: 'pnpm' }, { yarn: 'yarn' }],
+          key: 'packageManager',
+          name: 'package-manager',
+          required: false,
+          type: ['npm', 'pnpm', 'yarn'],
         },
         {
           name: 'name',
@@ -452,16 +423,38 @@ module.exports = {
           default: false,
           key: 'embroider',
           name: 'embroider',
-          description: 'Enables the build system to use Embroider',
+          description: 'Deprecated: Enables the build system to use Embroider',
           required: false
         },
         {
           name: 'ci-provider',
           key: 'ciProvider',
-          type: ['travis', 'github'],
+          type: ['github', 'none'],
           default: 'github',
-          description: 'Installs the default CI blueprint. Either Travis or Github Actions is supported.',
+          description: 'Installs the optional default CI blueprint. Only Github Actions is supported at the moment.',
           required: false,
+        },
+        {
+          name: 'ember-data',
+          key: 'emberData',
+          description: 'Include ember-data dependencies and configuration',
+          required: false,
+          default: true
+        },
+        {
+          aliases: ['ts'],
+          default: false,
+          key: 'typescript',
+          name: 'typescript',
+          description: 'Set up the app to use TypeScript',
+          required: false,
+        },
+        {
+          default: true,
+          description: 'Use GJS/GTS templates by default for generated components, tests, and route templates',
+          key: 'strict',
+          name: 'strict',
+          required: false
         },
       ],
       anonymousOptions: ['<glob-pattern>']
@@ -494,7 +487,7 @@ module.exports = {
           required: false
         },
         {
-          aliases: [{ yarn: 'yarn' }, { pnpm: 'pnpm' }],
+          aliases: [{ npm: 'npm' }, { pnpm: 'pnpm' }, { yarn: 'yarn' }],
           description:
             'Use this option to force the usage of a specific package manager. By default, ember-cli will try to detect the right package manager from any lockfiles that exist in your project.',
           key: 'packageManager',
@@ -507,9 +500,9 @@ module.exports = {
     },
     {
       name: 'new',
-      description: processHelpString('Creates a new directory and runs \u001b[32member init\u001b[39m in it.'),
+      description: processHelpString('Creates a new directory and runs ember init in it.'),
       aliases: [],
-      works: 'outsideProject',
+      works: 'everywhere',
       availableOptions: [
         {
           name: 'dry-run',
@@ -535,15 +528,8 @@ module.exports = {
         {
           name: 'skip-npm',
           default: false,
-          aliases: ['sn'],
+          aliases: ['sn', 'skip-install', 'si'],
           key: 'skipNpm',
-          required: false
-        },
-        {
-          name: 'skip-bower',
-          default: false,
-          aliases: ['sb'],
-          key: 'skipBower',
           required: false
         },
         {
@@ -561,9 +547,11 @@ module.exports = {
           required: false
         },
         {
-          name: 'yarn',
-          key: 'yarn',
-          required: false
+          aliases: [{ npm: 'npm' }, { pnpm: 'pnpm' }, { yarn: 'yarn' }],
+          key: 'packageManager',
+          name: 'package-manager',
+          required: false,
+          type: ['npm', 'pnpm', 'yarn'],
         },
         {
           name: 'directory',
@@ -578,175 +566,57 @@ module.exports = {
           required: false
         },
         {
+          name: 'lint-fix',
+          default: true,
+          key: 'lintFix',
+          required: false
+        },
+        {
           default: false,
           key: 'embroider',
           name: 'embroider',
-          description: 'Enables the build system to use Embroider',
+          description: 'Deprecated: Enables the build system to use Embroider',
           required: false
         },
         {
           name: 'ci-provider',
           key: 'ciProvider',
-          type: ['travis', 'github'],
-          default: 'github',
-          description: 'Installs the default CI blueprint. Either Travis or Github Actions is supported.',
+          type: ['github', 'none'],
+          description: 'Installs the optional default CI blueprint. Only Github Actions is supported at the moment.',
           required: false,
+        },
+        {
+          name: 'ember-data',
+          key: 'emberData',
+          description: 'Include ember-data dependencies and configuration',
+          required: false,
+          default: true
+        },
+        {
+          name: 'interactive',
+          default: false,
+          aliases: ['i'],
+          description: 'Create a new Ember app/addon in an interactive way.',
+          key: 'interactive',
+          required: false,
+        },
+        {
+          aliases: ['ts'],
+          default: false,
+          key: 'typescript',
+          name: 'typescript',
+          description: 'Set up the app to use TypeScript',
+          required: false,
+        },
+        {
+          default: true,
+          description: 'Use GJS/GTS templates by default for generated components, tests, and route templates',
+          key: 'strict',
+          name: 'strict',
+          required: false
         },
       ],
       anonymousOptions: ['<app-name>']
-    },
-    {
-      name: 'serve',
-      description: 'Builds and serves your app, rebuilding on file changes.',
-      aliases: ['server', 's'],
-      works: 'insideProject',
-      availableOptions: [
-        {
-          name: 'port',
-          default: 4200,
-          description: 'To use a port different than 4200. Pass 0 to automatically pick an available port.',
-          aliases: ['p'],
-          key: 'port',
-          required: false
-        },
-        {
-          name: 'host',
-          description: 'Listens on all interfaces by default',
-          aliases: ['H'],
-          key: 'host',
-          required: false
-        },
-        {
-          name: 'proxy',
-          aliases: ['pr', 'pxy'],
-          key: 'proxy',
-          required: false
-        },
-        {
-          name: 'proxy-in-timeout',
-          default: 120000,
-          description: 'When using --proxy: timeout (in ms) for incoming requests',
-          aliases: ['pit'],
-          key: 'proxyInTimeout',
-          required: false
-        },
-        {
-          name: 'proxy-out-timeout',
-          default: 0,
-          description: 'When using --proxy: timeout (in ms) for outgoing requests',
-          aliases: ['pot'],
-          key: 'proxyOutTimeout',
-          required: false
-        },
-        {
-          name: 'secure-proxy',
-          default: true,
-          description: 'Set to false to proxy self-signed SSL certificates',
-          aliases: ['spr'],
-          key: 'secureProxy',
-          required: false
-        },
-        {
-          name: 'transparent-proxy',
-          default: true,
-          description: 'Set to false to omit x-forwarded-* headers when proxying',
-          aliases: ['transp'],
-          key: 'transparentProxy',
-          required: false
-        },
-        {
-          name: 'watcher',
-          default: 'events',
-          aliases: ['w'],
-          key: 'watcher',
-          required: false
-        },
-        {
-          name: 'live-reload',
-          default: true,
-          aliases: ['lr'],
-          key: 'liveReload',
-          required: false
-        },
-        {
-          name: 'live-reload-host',
-          description: 'Defaults to host',
-          aliases: ['lrh'],
-          key: 'liveReloadHost',
-          required: false
-        },
-        {
-          aliases: ['lrbu'],
-          description: 'Defaults to baseURL',
-          key: 'liveReloadBaseUrl',
-          name: 'live-reload-base-url',
-          required: false
-        },
-        {
-          name: 'live-reload-port',
-          description: 'Defaults to same port as ember app',
-          aliases: ['lrp'],
-          key: 'liveReloadPort',
-          required: false
-        },
-        {
-          name: 'live-reload-prefix',
-          default: '_lr',
-          description: 'Default to _lr',
-          aliases: ['lrprefix'],
-          key: 'liveReloadPrefix',
-          required: false
-        },
-        {
-          name: 'environment',
-          description: 'Possible values are "development", "production", and "test".',
-          default: 'development',
-          aliases: [
-            'e',
-            { dev: 'development' },
-            { prod: 'production' }
-          ],
-          key: 'environment',
-          required: false
-        },
-        {
-          name: 'output-path',
-          default: 'dist/',
-          aliases: ['op', 'out'],
-          key: 'outputPath',
-          required: false,
-          type: 'Path',
-        },
-        {
-          name: 'ssl',
-          default: false,
-          description: 'Set to true to configure Ember CLI to serve using SSL.',
-          key: 'ssl',
-          required: false
-        },
-        {
-          name: 'ssl-key',
-          default: 'ssl/server.key',
-          description: 'Specify the private key to use for SSL.',
-          key: 'sslKey',
-          required: false
-        },
-        {
-          name: 'ssl-cert',
-          default: 'ssl/server.crt',
-          description: 'Specify the certificate to use for SSL.',
-          key: 'sslCert',
-          required: false
-        },
-        {
-          name: 'path',
-          description: 'Reuse an existing build at given path.',
-          key: 'path',
-          required: false,
-          type: 'Path'
-        }
-      ],
-      anonymousOptions: []
     },
     {
       name: 'test',
@@ -766,13 +636,6 @@ module.exports = {
           name: 'config-file',
           aliases: ['c', 'cf'],
           key: 'configFile',
-          required: false
-        },
-        {
-          name: 'server',
-          default: false,
-          aliases: ['s'],
-          key: 'server',
           required: false
         },
         {
@@ -876,13 +739,6 @@ module.exports = {
           description: 'A query string to append to the test page URL.',
           key: 'query',
           required: false
-        },
-        {
-          name: 'output-path',
-          aliases: ['o'],
-          key: 'outputPath',
-          required: false,
-          type: 'Path'
         }
       ],
       anonymousOptions: []

@@ -1,0 +1,15 @@
+/.nyc_output/
+/blueprints/*/files/
+/coverage/
+/docs/build/
+/lib/broccoli/app-*.js
+/lib/broccoli/test-support-*.js
+/lib/broccoli/tests-*.js
+/lib/broccoli/vendor-*.js
+/tests/fixtures/
+/tmp/
+/CHANGELOG.md
+/packages/addon-blueprint/files
+/packages/app-blueprint/files
+/packages/blueprint-blueprint/files
+/pnpm-lock.yaml

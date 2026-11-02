@@ -1,10 +1,11 @@
 'use strict';
 
-const Blueprint = require('../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const isPackageMissing = require('ember-cli-is-package-missing');
+const SilentError = require('silent-error');
 
 module.exports = {
-  description: 'Generates a mock api endpoint in /api prefix.',
+  description: '[Classic Only] Generates a mock api endpoint in /api prefix.',
 
   anonymousOptions: ['endpoint-path'],
 
@@ -15,9 +16,12 @@ module.exports = {
   },
 
   beforeInstall(options) {
+    if (this.project.isViteProject()) {
+      throw new SilentError('The http-mock blueprint is not supported in Vite projects.');
+    }
+
     let serverBlueprint = Blueprint.lookup('server', {
       ui: this.ui,
-      analytics: this.analytics,
       project: this.project,
     });
 

@@ -1,24 +1,19 @@
 'use strict';
 
-const util = require('util');
 const ember = require('../helpers/ember');
-const fs = require('fs-extra');
-let outputFile = util.promisify(fs.outputFile);
+const { outputFile } = require('fs-extra');
 const path = require('path');
-let remove = util.promisify(fs.remove);
 const replaceFile = require('ember-cli-internal-test-helpers/lib/helpers/file-utils').replaceFile;
 let root = process.cwd();
-let tmproot = path.join(root, 'tmp');
-const Blueprint = require('../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const BlueprintNpmTask = require('ember-cli-internal-test-helpers/lib/helpers/disable-npm-on-blueprint');
-const mkTmpDirIn = require('../../lib/utilities/mk-tmp-dir-in');
+const tmp = require('tmp-promise');
 const td = require('testdouble');
 const lintFix = require('../../lib/utilities/lint-fix');
 
-const chai = require('../chai');
-let expect = chai.expect;
-let file = chai.file;
-let dir = chai.dir;
+const { expect } = require('chai');
+const { dir, file } = require('chai-files');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 
 describe('Acceptance: ember generate', function () {
   this.timeout(20000);
@@ -34,24 +29,18 @@ describe('Acceptance: ember generate', function () {
   });
 
   beforeEach(async function () {
-    tmpdir = await mkTmpDirIn(tmproot);
-    process.chdir(tmpdir);
+    const { path } = await tmp.dir();
+    tmpdir = path;
+    process.chdir(path);
   });
 
   afterEach(function () {
     td.reset();
     process.chdir(root);
-    return remove(tmproot);
   });
 
   function initApp() {
-    return ember(['init', '--name=my-app', '--skip-npm', '--skip-bower']).then(addJSHint);
-  }
-
-  function addJSHint() {
-    let pkg = fs.readJsonSync('package.json');
-    pkg.devDependencies['ember-cli-jshint'] = '*';
-    fs.writeJsonSync('package.json', pkg);
+    return ember(['init', '--name=my-app', '--skip-npm']);
   }
 
   function generate(args) {
@@ -90,33 +79,55 @@ describe('Acceptance: ember generate', function () {
   });
 
   it('http-mock foo', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await generate(['http-mock', 'foo']);
 
     expect(file('server/index.js')).to.contain('mocks.forEach(route => route(app));');
 
     expect(file('server/mocks/foo.js').content).to.matchSnapshot();
+  });
 
-    expect(file('server/.jshintrc')).to.contain('{\n  "node": true\n}');
+  it('http-mock throws', async function () {
+    if (isExperimentEnabled('VITE')) {
+      await expect(generate(['http-mock', 'foo'])).to.be.rejectedWith(
+        'The http-mock blueprint is not supported in Vite projects'
+      );
+    }
   });
 
   it('http-mock foo-bar', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await generate(['http-mock', 'foo-bar']);
 
     expect(file('server/index.js')).to.contain('mocks.forEach(route => route(app));');
 
     expect(file('server/mocks/foo-bar.js').content).to.matchSnapshot();
-
-    expect(file('server/.jshintrc')).to.contain('{\n  "node": true\n}');
   });
 
   it('http-proxy foo', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await generate(['http-proxy', 'foo', 'http://localhost:5000']);
 
     expect(file('server/index.js')).to.contain('proxies.forEach(route => route(app));');
 
     expect(file('server/proxies/foo.js').content).to.matchSnapshot();
+  });
 
-    expect(file('server/.jshintrc')).to.contain('{\n  "node": true\n}');
+  it('http-proxy throws', async function () {
+    if (isExperimentEnabled('VITE')) {
+      await expect(generate(['http-proxy', 'foo', 'http://localhost:5000'])).to.be.rejectedWith(
+        'The http-proxy blueprint is not supported in Vite projects'
+      );
+    }
   });
 
   it('uses blueprints from the project directory', async function () {
@@ -142,6 +153,13 @@ describe('Acceptance: ember generate', function () {
     await ember(['generate', 'controller', 'foo']);
 
     expect(file('app/controllers/foo.js')).to.contain('custom: true');
+  });
+
+  it('allows a path to be specified to a blueprint', async function () {
+    await outputFile('path/to/blueprints/foo/files/foo/__name__.js', "console.log('bar');\n");
+    await generate([path.join('path', 'to', 'blueprints', 'foo'), 'bar']);
+
+    expect(file('foo/bar.js')).to.contain("console.log('bar');\n");
   });
 
   it('passes custom cli arguments to blueprint options', async function () {
@@ -184,8 +202,18 @@ describe('Acceptance: ember generate', function () {
   });
 
   it('server', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await generate(['server']);
     expect(file('server/index.js')).to.exist;
+  });
+
+  it('server throws', async function () {
+    if (isExperimentEnabled('VITE')) {
+      await expect(generate(['server'])).to.be.rejectedWith('The server blueprint is not supported in Vite projects.');
+    }
   });
 
   it('lib', async function () {
@@ -226,5 +254,18 @@ describe('Acceptance: ember generate', function () {
     await generate(['blueprint', 'foo', '--lint-fix']);
 
     td.verify(lintFixStub(), { ignoreExtraArgs: true, times: 1 });
+  });
+
+  it('successfully generates a blueprint with a scoped name', async function () {
+    await initApp();
+    await ember(['g', 'blueprint', '@foo/bar']);
+    await outputFile('blueprints/@foo/bar/files/__name__.js', '');
+    await ember(['g', '@foo/bar', 'baz']);
+
+    expect(file('baz.js')).to.exist;
+  });
+
+  it(`throws the unknown blueprint error when \`name\` matches a folder's name, but doesn't include the \`${path.sep}\` char`, async function () {
+    await expect(generate(['tests'])).to.be.rejectedWith('Unknown blueprint: tests');
   });
 });

@@ -2,27 +2,25 @@
 
 const Heimdall = require('heimdalljs/heimdall');
 const heimdallGraph = require('heimdalljs-graph');
-const chai = require('../../chai');
+const { expect } = require('chai');
 const td = require('testdouble');
 const fs = require('fs');
-const path = require('path');
+const tmp = require('tmp-promise');
 const fse = require('fs-extra');
 const MockUI = require('console-ui/mock');
 const Yam = require('yam');
 
 const MockProject = require('../../helpers/mock-project');
-const mkTmpDirIn = require('../../../lib/utilities/mk-tmp-dir-in');
-const hwinfo = require('../../../lib/models/hardware-info');
+const { hwinfo } = require('../../../lib/models/hardware-info');
 const Instrumentation = require('../../../lib/models/instrumentation');
 
-const expect = chai.expect;
 const any = td.matchers.anything;
 const contains = td.matchers.contains;
 
 const root = process.cwd();
-const tmproot = path.join(root, 'tmp');
 
 let instrumentation;
+let originalStatSync = fs.statSync;
 
 describe('models/instrumentation.js', function () {
   afterEach(async function () {
@@ -30,12 +28,9 @@ describe('models/instrumentation.js', function () {
     delete process.env.EMBER_CLI_INSTRUMENTATION;
 
     process.chdir(root);
-    await fse.remove(tmproot);
   });
 
   describe('._enableFSMonitorIfInstrumentationEnabled', function () {
-    let originalStatSync = fs.statSync;
-
     beforeEach(function () {
       expect(!!process.env.BROCCOLI_VIZ).to.eql(false);
       expect(!!process.env.EMBER_CLI_INSTRUMENTATION).to.eql(false);
@@ -236,13 +231,6 @@ describe('models/instrumentation.js', function () {
       process.env.BROCCOLI_VIZ = '1';
       expect(instrumentation.isVizEnabled()).to.eql(true);
       expect(warnInvocations).to.eql([]);
-    });
-
-    it('is true and warns at most once if BROCCOLI_VIZ is set but not 1', function () {
-      process.env.BROCCOLI_VIZ = 'on';
-      expect(instrumentation.isVizEnabled()).to.eql(true);
-      expect(instrumentation.isVizEnabled()).to.eql(true);
-      expect(warnInvocations).to.eql(["Please set BROCCOLI_VIZ=1 to enable visual instrumentation, rather than 'on'"]);
     });
 
     it('is false if BROCCOLI_VIZ is unset', function () {
@@ -529,9 +517,9 @@ describe('models/instrumentation.js', function () {
       it('writes instrumentation info if viz is enabled', async function () {
         process.env.BROCCOLI_VIZ = '1';
 
-        await mkTmpDirIn(tmproot);
+        const { path } = await tmp.dir();
 
-        process.chdir(tmproot);
+        process.chdir(path);
 
         instrumentation.start('init');
         instrumentation.stopAndReport('init', 'a', 'b');
@@ -564,9 +552,8 @@ describe('models/instrumentation.js', function () {
       it('does not write instrumentation info if viz is disabled', async function () {
         delete process.env.BROCCOLI_VIZ;
 
-        await mkTmpDirIn(tmproot);
-
-        process.chdir(tmproot);
+        const { path } = await tmp.dir();
+        process.chdir(path);
 
         instrumentation.start('init');
         instrumentation.stopAndReport('init');

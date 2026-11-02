@@ -3,51 +3,38 @@
 const path = require('path');
 const fs = require('fs-extra');
 const spawn = require('child_process').spawn;
-const execa = require('execa');
-const chalk = require('chalk');
+const { execa } = require('execa');
+const { default: chalk } = require('chalk');
 
 const runCommand = require('../helpers/run-command');
-const ember = require('../helpers/ember');
 const copyFixtureFiles = require('../helpers/copy-fixture-files');
-const acceptance = require('../helpers/acceptance');
-let createTestTargets = acceptance.createTestTargets;
-let teardownTestTargets = acceptance.teardownTestTargets;
-let linkDependencies = acceptance.linkDependencies;
-let cleanupRun = acceptance.cleanupRun;
+const { createAndInstallTestTargets } = require('../helpers/acceptance');
 
-const chai = require('../chai');
-let expect = chai.expect;
-let dir = chai.dir;
+let root = path.resolve(__dirname, '..', '..');
+
+const { expect } = require('chai');
+const { dir } = require('chai-files');
 
 let addonName = 'some-cool-addon';
 let addonRoot;
+let testSetup;
 
 describe('Acceptance: addon-smoke-test', function () {
   this.timeout(450000);
 
-  before(function () {
-    return createTestTargets(addonName, {
-      command: 'addon',
-    });
-  });
-
-  after(teardownTestTargets);
-
-  beforeEach(function () {
-    addonRoot = linkDependencies(addonName);
-
+  beforeEach(async function () {
+    testSetup = await createAndInstallTestTargets(addonName, { command: 'addon' });
+    addonRoot = testSetup.path;
+    process.chdir(addonRoot);
     process.env.JOBS = '1';
   });
 
-  afterEach(function () {
-    runCommand.killAll();
-    // Cleans up a folder set up on the other side of a symlink.
-    fs.removeSync(path.join(addonRoot, 'node_modules', 'developing-addon'));
-
-    cleanupRun(addonName);
-    expect(dir(addonRoot)).to.not.exist;
-
+  afterEach(async function () {
     delete process.env.JOBS;
+    runCommand.killAll();
+    process.chdir(root);
+    await testSetup.cleanup();
+    expect(dir(addonRoot)).to.not.exist;
   });
 
   it('generates package.json with proper metadata', function () {
@@ -59,8 +46,9 @@ describe('Acceptance: addon-smoke-test', function () {
     expect(packageContents['ember-addon']).to.deep.equal({ configPath: 'tests/dummy/config' });
   });
 
-  it('ember addon foo, clean from scratch', function () {
-    return ember(['test']);
+  it('ember addon foo, clean from scratch', async function () {
+    let result = await runCommand('node_modules/ember-cli/bin/ember', 'test');
+    expect(result.code).to.eql(0);
   });
 
   it('works in most common scenarios for an example addon', async function () {
@@ -146,20 +134,9 @@ describe('Acceptance: addon-smoke-test', function () {
       return handleError(error, 'tar');
     }
 
-    let necessaryFiles = ['package.json', 'index.js', 'LICENSE.md', 'README.md', 'config/environment.js'];
-
-    let unnecessaryFiles = [
-      '.gitkeep',
-      '.travis.yml',
-      '.editorconfig',
-      'testem.js',
-      '.ember-cli',
-      'bower.json',
-      '.bowerrc',
-    ];
-
-    let unnecessaryFolders = [/^tests\//, /^bower_components\//];
-
+    let necessaryFiles = ['package.json', 'index.js', 'LICENSE.md', 'README.md'];
+    let unnecessaryFiles = ['.gitkeep', '.editorconfig', 'testem.js', '.ember-cli'];
+    let unnecessaryFolders = [/^tests\//];
     let outputFiles = output
       .split('\n')
       .filter(Boolean)

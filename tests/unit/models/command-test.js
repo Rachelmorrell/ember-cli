@@ -1,6 +1,6 @@
 'use strict';
 
-const expect = require('../../chai').expect;
+const { expect } = require('chai');
 const commandOptions = require('../../factories/command-options');
 const processHelpString = require('../../helpers/process-help-string');
 const Yam = require('yam');
@@ -92,6 +92,7 @@ describe('models/command.js', function () {
   beforeEach(function () {
     options = commandOptions();
     ui = options.ui;
+    delete process.env.EMBROIDER_PREBUILD;
   });
 
   afterEach(function () {
@@ -215,6 +216,27 @@ describe('models/command.js', function () {
       return new InsideProjectCommand(
         Object.assign(options, {
           availableOptions: [{ type: 'string', name: 'watcher' }],
+          project: {
+            hasDependencies() {
+              return true;
+            },
+            isEmberCLIProject() {
+              return true;
+            },
+          },
+        })
+      )
+        .validateAndRun([])
+        .then(function (options) {
+          expect(options).to.have.property('watcher');
+        });
+    });
+    it('selects watcher (when EMBROIDER_PREBUILD is present)', function () {
+      process.env.EMBROIDER_PREBUILD = 'true';
+
+      return new InsideProjectCommand(
+        Object.assign(options, {
+          availableOptions: [],
           project: {
             hasDependencies() {
               return true;
@@ -748,7 +770,6 @@ describe('models/command.js', function () {
       let taskRun = command.runTask('Async', { param: 'value' });
 
       expect(command._currentTask.ui).to.eql(command.ui);
-      expect(command._currentTask.analytics).to.eql(command.analytics);
       expect(command._currentTask.project).to.eql(command.project);
 
       return taskRun;

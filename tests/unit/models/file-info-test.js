@@ -1,41 +1,37 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const MockUI = require('console-ui/mock');
-const FileInfo = require('../../../lib/models/file-info');
+const FileInfo = require('@ember-tooling/blueprint-model/utilities/file-info');
 const path = require('path');
 const fs = require('fs-extra');
 const EOL = require('os').EOL;
-const mkTmpDirIn = require('../../../lib/utilities/mk-tmp-dir-in');
+const tmp = require('tmp-promise');
 const td = require('testdouble');
-
-let root = process.cwd();
-let tmproot = path.join(root, 'tmp');
 
 describe('Unit - FileInfo', function () {
   let validOptions, ui, testOutputPath;
 
-  beforeEach(function () {
-    return mkTmpDirIn(tmproot).then(function (tmpdir) {
-      testOutputPath = path.join(tmpdir, 'outputfile');
+  beforeEach(async function () {
+    const { path: tmpdir } = await tmp.dir();
 
-      ui = new MockUI();
-      td.replace(ui, 'prompt');
+    testOutputPath = path.join(tmpdir, 'outputfile');
 
-      validOptions = {
-        action: 'write',
-        outputPath: testOutputPath,
-        displayPath: '/pretty-output-path',
-        inputPath: path.resolve(__dirname, '../../fixtures/blueprints/with-templating/files/foo.txt'),
-        templateVariables: {},
-        ui,
-      };
-    });
+    ui = new MockUI();
+    td.replace(ui, 'prompt');
+
+    validOptions = {
+      action: 'write',
+      outputPath: testOutputPath,
+      displayPath: '/pretty-output-path',
+      inputPath: path.resolve(__dirname, '../../fixtures/blueprints/with-templating/files/foo.txt'),
+      templateVariables: {},
+      ui,
+    };
   });
 
-  afterEach(function (done) {
+  afterEach(function () {
     td.reset();
-    fs.remove(tmproot, done);
   });
 
   it('can instantiate with options', function () {

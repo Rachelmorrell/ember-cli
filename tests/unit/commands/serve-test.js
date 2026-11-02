@@ -1,14 +1,11 @@
 'use strict';
 
-const expect = require('../../chai').expect;
+const { expect } = require('chai');
 const EOL = require('os').EOL;
 const commandOptions = require('../../factories/command-options');
 const Task = require('../../../lib/models/task');
-const util = require('util');
 const td = require('testdouble');
-const PortFinder = require('portfinder');
-
-const getPort = util.promisify(PortFinder.getPort);
+const { getPortPromise } = require('portfinder');
 
 const ServeCommand = require('../../../lib/commands/serve');
 
@@ -17,7 +14,7 @@ describe('serve command', function () {
 
   beforeEach(function () {
     tasks = {
-      Serve: Task.extend(),
+      Serve: class extends Task {},
     };
 
     options = commandOptions({
@@ -43,7 +40,7 @@ describe('serve command', function () {
   });
 
   it('setting --port without --live-reload-port', function () {
-    return getPort().then(function (port) {
+    return getPortPromise().then(function (port) {
       return command.validateAndRun(['--port', `${port}`]).then(function () {
         let captor = td.matchers.captor();
         td.verify(tasks.Serve.prototype.run(captor.capture()), { times: 1 });
@@ -54,7 +51,7 @@ describe('serve command', function () {
   });
 
   it('setting both --port and --live-reload-port', function () {
-    return getPort().then(function (port) {
+    return getPortPromise().then(function (port) {
       return command.validateAndRun(['--port', `${port}`, '--live-reload-port', '8005']).then(function () {
         let captor = td.matchers.captor();
         td.verify(tasks.Serve.prototype.run(captor.capture()), { times: 1 });
@@ -64,48 +61,51 @@ describe('serve command', function () {
     });
   });
 
-  if (process.platform !== 'win32') {
-    // This test fails on appveyor for an unknown reason. See last few comments
-    // on PR https://github.com/ember-cli/ember-cli/pull/5391
-    //
-    // Works correctly on Travis and has been left for context as it does test
-    // a valid code path.
+  // Allocate opts.port on opts.host if it is available (which we check through getPortPromise)
+  let testServer = function (opts, test) {
+    let server = require('http').createServer(function () {});
+    return getPortPromise({
+      ...opts,
+      stopPort: opts.port,
+    })
+      .then(() =>
+        new Promise(function (resolve) {
+          server.listen(opts.port, opts.host, () => resolve(test()));
+        }).finally(() => new Promise((resolve) => server.close(() => resolve())))
+      )
+      .catch(() => test());
+  };
 
-    let testServer = function (opts, test) {
-      let server = require('http').createServer(function () {});
-      return new Promise(function (resolve) {
-        server.listen(opts.port, opts.host, function () {
-          resolve(test(opts, server));
-        });
-      }).finally(function () {
-        return new Promise(function (resolve) {
-          server.close(function () {
-            resolve();
-          });
-        });
+  it('should throw error when -p PORT is taken', function () {
+    return testServer({ port: '32773' }, function () {
+      return expect(command.validateAndRun(['--port', '32773'])).to.be.rejected.then((err) => {
+        td.verify(tasks.Serve.prototype.run(), { ignoreExtraArgs: true, times: 0 });
+        expect(err.message).to.contain('is already in use.');
       });
-    };
-
-    it('should throw error when -p PORT is taken', function () {
-      return testServer({ port: '32773' }, function () {
-        return expect(command.validateAndRun(['--port', '32773'])).to.be.rejected.then((err) => {
-          td.verify(tasks.Serve.prototype.run(), { ignoreExtraArgs: true, times: 0 });
-          expect(err.message).to.contain('is already in use.');
-        });
-      });
-    });
-  }
-
-  it('allows OS to choose port', function () {
-    return command.validateAndRun(['--port', '0']).then(function () {
-      let captor = td.matchers.captor();
-      td.verify(tasks.Serve.prototype.run(captor.capture()), { times: 1 });
-      expect(captor.value.port).to.be.within(7020, 65535, 'has correct port');
-      expect(captor.value.liveReloadPort).to.be.equal(captor.value.port, 'has correct port');
     });
   });
 
-  it('has correct liveLoadPort', function () {
+  it('should throw descriptive error when -p PORT is taken and PORT < 1024', function () {
+    return testServer({ port: '1000' }, function () {
+      return expect(command.validateAndRun(['--port', '1000'])).to.be.rejected.then((err) => {
+        td.verify(tasks.Serve.prototype.run(), { ignoreExtraArgs: true, times: 0 });
+        expect(err.message).to.contain('you do not have permission');
+      });
+    });
+  });
+
+  it('allows OS to choose port by default', function () {
+    return testServer({ port: '4200' }, function () {
+      return command.validateAndRun().then(function () {
+        let captor = td.matchers.captor();
+        td.verify(tasks.Serve.prototype.run(captor.capture()), { times: 1 });
+        expect(captor.value.port).to.be.within(4201, 65535, 'has correct port');
+        expect(captor.value.liveReloadPort).to.be.equal(captor.value.port, 'has correct port');
+      });
+    });
+  });
+
+  it('has correct liveReloadPort', function () {
     return command.validateAndRun(['--port', '0', '--live-reload-port', '4001']).then(function () {
       let captor = td.matchers.captor();
       td.verify(tasks.Serve.prototype.run(captor.capture()), { times: 1 });
@@ -113,7 +113,7 @@ describe('serve command', function () {
     });
   });
 
-  it('has correct liveReloadLoadHost', function () {
+  it('has correct liveReloadHost', function () {
     return command.validateAndRun(['--port', '0', '--live-reload-host', '127.0.0.1']).then(function () {
       let captor = td.matchers.captor();
       td.verify(tasks.Serve.prototype.run(captor.capture()), { times: 1 });
@@ -121,7 +121,7 @@ describe('serve command', function () {
     });
   });
 
-  it('has correct liveLoadBaseUrl', function () {
+  it('has correct liveReloadBaseUrl', function () {
     return command
       .validateAndRun(['--port', '0', '--live-reload-base-url', 'http://127.0.0.1:4200/'])
       .then(function () {
@@ -225,6 +225,14 @@ describe('serve command', function () {
     return expect(command.validateAndRun(['--port', '0'])).to.be.rejected.then((error) => {
       expect(error.message).to.match(/You have to be inside an ember-cli project/);
     });
+  });
+
+  it('throws when run in a Vite-based project', async function () {
+    command.isViteProject = true;
+
+    await expect(command.validateAndRun([])).to.be.rejectedWith(
+      'The `serve` command is not supported in Vite-based projects. Please use the `start` script from package.json.'
+    );
   });
 
   it('waits on the serve tasks promise', async function () {

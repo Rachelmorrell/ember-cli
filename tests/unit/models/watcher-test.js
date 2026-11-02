@@ -1,20 +1,18 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 
 const MockUI = require('console-ui/mock');
-const MockAnalytics = require('../../helpers/mock-analytics');
 const MockBroccoliWatcher = require('../../helpers/mock-broccoli-watcher');
 const Watcher = require('../../../lib/models/watcher');
 const EOL = require('os').EOL;
-const chalk = require('chalk');
+const { default: chalk } = require('chalk');
 const BuildError = require('../../helpers/build-error');
 
 describe('Watcher', function () {
   let ui;
   let subject;
   let builder;
-  let analytics;
   let watcher;
 
   let mockResult = {
@@ -35,18 +33,18 @@ describe('Watcher', function () {
     },
   };
 
-  beforeEach(function () {
+  beforeEach(async function () {
     ui = new MockUI();
-    analytics = new MockAnalytics();
 
     watcher = new MockBroccoliWatcher();
 
-    subject = new Watcher({
-      ui,
-      analytics,
-      builder,
-      watcher,
-    });
+    subject = (
+      await Watcher.build({
+        ui,
+        builder,
+        watcher,
+      })
+    ).watcher;
   });
 
   describe('watcher strategy selection', function () {
@@ -108,26 +106,6 @@ describe('Watcher', function () {
       watcher.emit(`buildSuccess`, mockResult);
     });
 
-    it('tracks events', function () {
-      expect(analytics.tracks).to.deep.equal([
-        {
-          name: 'ember rebuild',
-          message: 'broccoli rebuild time: 12344ms',
-        },
-      ]);
-    });
-
-    it('tracks timings', function () {
-      expect(analytics.trackTimings).to.deep.equal([
-        {
-          category: 'rebuild',
-          variable: 'rebuild time',
-          label: 'broccoli rebuild time',
-          value: 12344,
-        },
-      ]);
-    });
-
     it('logs that the build was successful', function () {
       expect(ui.output).to.equal(EOL + chalk.green('Build successful (12344ms)') + EOL);
     });
@@ -136,29 +114,30 @@ describe('Watcher', function () {
   describe('output', function () {
     this.timeout(40000);
 
-    it('with ssl', function () {
-      let subject = new Watcher({
-        ui,
-        analytics,
-        builder,
-        watcher,
-        serving: true,
-        options: {
-          host: undefined,
-          port: '1337',
-          ssl: true,
-          sslCert: 'tests/fixtures/ssl/server.crt',
-          sslKey: 'tests/fixtures/ssl/server.key',
-          environment: 'development',
-          project: {
-            config() {
-              return {
-                rootURL: '/',
-              };
+    it('with ssl', async function () {
+      let subject = (
+        await Watcher.build({
+          ui,
+          builder,
+          watcher,
+          serving: true,
+          options: {
+            host: undefined,
+            port: '1337',
+            ssl: true,
+            sslCert: 'tests/fixtures/ssl/server.crt',
+            sslKey: 'tests/fixtures/ssl/server.key',
+            environment: 'development',
+            project: {
+              config() {
+                return {
+                  rootURL: '/',
+                };
+              },
             },
           },
-        },
-      });
+        })
+      ).watcher;
 
       subject.didChange(mockResult);
 
@@ -166,56 +145,27 @@ describe('Watcher', function () {
       expect(output[0]).to.equal(`${chalk.green('Build successful (12344ms)')} – Serving on https://localhost:1337/`);
     });
 
-    it('with baseURL', function () {
-      let subject = new Watcher({
-        ui,
-        analytics,
-        builder,
-        watcher,
-        serving: true,
-        options: {
-          host: undefined,
-          port: '1337',
-          environment: 'development',
-          project: {
-            config() {
-              return {
-                baseURL: '/foo',
-              };
+    it('with rootURL', async function () {
+      let subject = (
+        await Watcher.build({
+          ui,
+          builder,
+          watcher,
+          serving: true,
+          options: {
+            host: undefined,
+            port: '1337',
+            environment: 'development',
+            project: {
+              config() {
+                return {
+                  rootURL: '/foo',
+                };
+              },
             },
           },
-        },
-      });
-
-      subject.didChange(mockResult);
-
-      let output = ui.output.trim().split(EOL);
-      expect(output[0]).to.equal(
-        `${chalk.green('Build successful (12344ms)')} – Serving on http://localhost:1337/foo/`
-      );
-      expect(output.length).to.equal(1, 'expected only one line of output');
-    });
-
-    it('with rootURL', function () {
-      let subject = new Watcher({
-        ui,
-        analytics,
-        builder,
-        watcher,
-        serving: true,
-        options: {
-          host: undefined,
-          port: '1337',
-          environment: 'development',
-          project: {
-            config() {
-              return {
-                rootURL: '/foo',
-              };
-            },
-          },
-        },
-      });
+        })
+      ).watcher;
 
       subject.didChange(mockResult);
 
@@ -227,27 +177,28 @@ describe('Watcher', function () {
       expect(output.length).to.equal(1, 'expected only one line of output');
     });
 
-    it('with empty rootURL', function () {
-      let subject = new Watcher({
-        ui,
-        analytics,
-        builder,
-        watcher,
-        serving: true,
-        options: {
-          host: undefined,
-          port: '1337',
-          rootURL: '',
-          environment: 'development',
-          project: {
-            config() {
-              return {
-                rootURL: '',
-              };
+    it('with empty rootURL', async function () {
+      let subject = (
+        await Watcher.build({
+          ui,
+          builder,
+          watcher,
+          serving: true,
+          options: {
+            host: undefined,
+            port: '1337',
+            rootURL: '',
+            environment: 'development',
+            project: {
+              config() {
+                return {
+                  rootURL: '',
+                };
+              },
             },
           },
-        },
-      });
+        })
+      ).watcher;
 
       subject.didChange(mockResult);
 
@@ -256,27 +207,28 @@ describe('Watcher', function () {
       expect(output.length).to.equal(1, 'expected only one line of output');
     });
 
-    it('with customURL', function () {
-      let subject = new Watcher({
-        ui,
-        analytics,
-        builder,
-        watcher,
-        serving: true,
-        options: {
-          host: undefined,
-          port: '1337',
-          rootURL: '',
-          environment: 'development',
-          project: {
-            config() {
-              return {
-                rootURL: '',
-              };
+    it('with customURL', async function () {
+      let subject = (
+        await Watcher.build({
+          ui,
+          builder,
+          watcher,
+          serving: true,
+          options: {
+            host: undefined,
+            port: '1337',
+            rootURL: '',
+            environment: 'development',
+            project: {
+              config() {
+                return {
+                  rootURL: '',
+                };
+              },
             },
           },
-        },
-      });
+        })
+      ).watcher;
       subject.serveURL = function () {
         return `http://customurl.com/`;
       };
@@ -288,19 +240,6 @@ describe('Watcher', function () {
   });
 
   describe('watcher:error', function () {
-    it('tracks errors', function () {
-      watcher.emit('error', {
-        message: 'foo',
-        stack: new Error().stack,
-      });
-
-      expect(analytics.trackErrors).to.deep.equal([
-        {
-          description: undefined,
-        },
-      ]);
-    });
-
     it('watcher error', function () {
       watcher.emit('error', {
         message: 'foo',
@@ -411,15 +350,6 @@ describe('Watcher', function () {
 
     it('log that the build was green', function () {
       expect(ui.output).to.match(/Build successful./, 'has successful build output');
-    });
-
-    it('keep tracking analytics', function () {
-      expect(analytics.tracks).to.deep.equal([
-        {
-          name: 'ember rebuild',
-          message: 'broccoli rebuild time: 12344ms',
-        },
-      ]);
     });
   });
 });

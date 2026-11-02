@@ -8,6 +8,7 @@ Options:
   - '--ember-source' (required) - The dist-tag to use for ember-source
   - '--ember-data' (required) - The dist-tag to use for ember-data
   - '--filter' (optional) - A RegExp to filter the packages to update by
+  - '--latest' (optional) - Always use the latest version available for a package (includes major bumps, 'false' by default)
 
 Example:
 
@@ -24,7 +25,7 @@ const path = require('path');
 const util = require('util');
 const nopt = require('nopt');
 const npmPackageArg = require('npm-package-arg');
-const _latestVersion = require('latest-version');
+const { default: _latestVersion } = require('latest-version');
 
 nopt.typeDefs['regexp'] = {
   type: RegExp,
@@ -39,19 +40,30 @@ const OPTIONS = nopt({
   'ember-source': String,
   'ember-data': String,
   filter: String,
+  latest: Boolean,
 });
 
 const PACKAGE_FILES = [
-  '../blueprints/app/files/package.json',
-  '../blueprints/addon/additional-dev-dependencies.json',
+  '../packages/app-blueprint/files/package.json',
+  '../packages/addon-blueprint/additional-package.json',
   '../tests/fixtures/app/defaults/package.json',
   '../tests/fixtures/app/npm/package.json',
   '../tests/fixtures/app/yarn/package.json',
+  '../tests/fixtures/app/pnpm/package.json',
+  '../tests/fixtures/app/no-ember-data/package.json',
   '../tests/fixtures/app/embroider/package.json',
   '../tests/fixtures/app/embroider-yarn/package.json',
+  '../tests/fixtures/app/embroider-pnpm/package.json',
   '../tests/fixtures/app/embroider-no-welcome/package.json',
+  '../tests/fixtures/app/embroider-no-ember-data/package.json',
+  '../tests/fixtures/app/typescript/package.json',
+  '../tests/fixtures/app/typescript-no-ember-data/package.json',
+  '../tests/fixtures/app/typescript-embroider/package.json',
+  '../tests/fixtures/app/typescript-embroider-no-ember-data/package.json',
   '../tests/fixtures/addon/defaults/package.json',
   '../tests/fixtures/addon/yarn/package.json',
+  '../tests/fixtures/addon/pnpm/package.json',
+  '../tests/fixtures/addon/typescript/package.json',
 ];
 
 let filter = {
@@ -84,16 +96,24 @@ function shouldCheckDependency(dependency) {
 }
 
 const LATEST = new Map();
-async function latestVersion(packageName) {
+async function latestVersion(packageName, semverRange) {
   let result = LATEST.get(packageName);
 
   if (result === undefined) {
     let options = {
-      version: 'latest',
+      version: semverRange,
     };
 
     if (OPTIONS[packageName]) {
       options.version = OPTIONS[packageName];
+    }
+
+    /**
+     * We need any @ember-data/* or @warp-drive/* packages to match the same version as ember-data in the
+     * package.json files.
+     */
+    if (packageName.startsWith('@ember-data/') || packageName.startsWith('@warp-drive/')) {
+      options.version = OPTIONS['ember-data'];
     }
 
     result = _latestVersion(packageName, options);
@@ -104,12 +124,14 @@ async function latestVersion(packageName) {
 }
 
 async function updateDependencies(dependencies) {
-  for (let dependency in dependencies) {
-    if (!shouldCheckDependency(dependency)) {
+  for (let dependencyKey in dependencies) {
+    let dependencyName = removeTemplateExpression(dependencyKey);
+
+    if (!shouldCheckDependency(dependencyName)) {
       continue;
     }
 
-    let previousValue = dependencies[dependency];
+    let previousValue = dependencies[dependencyKey];
 
     // grab the first char (~ or ^)
     let prefix = previousValue[0];
@@ -122,9 +144,29 @@ async function updateDependencies(dependencies) {
     let hasVersion = previousValue[1] !== '<';
 
     if (hasVersion && isValidPrefix) {
-      dependencies[dependency] = `${prefix}${await latestVersion(dependency)}${templateSuffix}`;
+      const semverRange = OPTIONS.latest ? 'latest' : removeTemplateExpression(previousValue);
+      try {
+        const newVersion = await latestVersion(dependencyName, semverRange);
+
+        dependencies[dependencyKey] = `${prefix}${newVersion}${templateSuffix}`;
+      } catch (err) {
+        console.warn(`Error checking new version of ${dependencyName}: ${err.message}`);
+      }
     }
   }
+}
+
+function removeTemplateExpression(dependency) {
+  if (dependency.includes('<') === false) {
+    return dependency;
+  }
+
+  let semverRange = dependency.replace(
+    dependency.substring(dependency.indexOf('<'), dependency.lastIndexOf('>') + 1),
+    ''
+  );
+
+  return semverRange;
 }
 
 async function main() {
@@ -150,7 +192,7 @@ if (module === require.main) {
 
     console.error(error.stack);
 
-    /* eslint-disable-next-line no-process-exit */
+    // eslint-disable-next-line n/no-process-exit
     process.exit(1);
   });
 
@@ -162,3 +204,5 @@ if (module === require.main) {
     return;
   }
 }
+
+module.exports = { PACKAGE_FILES, updateDependencies };

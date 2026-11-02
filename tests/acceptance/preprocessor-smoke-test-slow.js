@@ -11,10 +11,10 @@ let createTestTargets = acceptance.createTestTargets;
 let teardownTestTargets = acceptance.teardownTestTargets;
 let linkDependencies = acceptance.linkDependencies;
 let cleanupRun = acceptance.cleanupRun;
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 
-const chai = require('../chai');
-let expect = chai.expect;
-let dir = chai.dir;
+const { expect } = require('chai');
+const { dir } = require('chai-files');
 
 let appName = 'some-cool-app';
 let appRoot;
@@ -56,6 +56,10 @@ describe('Acceptance: preprocessor-smoke-test', function () {
   });
 
   it('addon registry entries are added in the proper order', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles(`preprocessor-tests/app-registry-ordering`);
 
     let packageJsonPath = path.join(appRoot, 'package.json');
@@ -75,23 +79,6 @@ describe('Acceptance: preprocessor-smoke-test', function () {
       .be;
   });
 
-  it('addons without preprocessors compile correctly', async function () {
-    await copyFixtureFiles(`preprocessor-tests/app-with-addon-without-preprocessors`);
-
-    let packageJsonPath = path.join(appRoot, 'package.json');
-    let packageJson = fs.readJsonSync(packageJsonPath);
-    packageJson.devDependencies['ember-cli-sass'] = 'latest';
-    packageJson.devDependencies['ember-cool-addon'] = 'latest';
-    fs.writeJsonSync(packageJsonPath, packageJson);
-
-    await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
-
-    let checker = new DistChecker(path.join(appRoot, 'dist'));
-
-    expect(checker.contains('css', 'app styles included')).to.be;
-    expect(checker.contains('css', 'addon styles included')).to.be;
-  });
-
   /*
     [ app ]  -> [ addon ] -> [ preprocessor addon ]
       |             |
@@ -100,6 +87,10 @@ describe('Acceptance: preprocessor-smoke-test', function () {
       |-- preprocessor should not apply to this
   */
   it('addons depending on preprocessor addon preprocesses addon but not app', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles(`preprocessor-tests/app-with-addon-with-preprocessors-2`);
 
     let packageJsonPath = path.join(appRoot, 'package.json');
@@ -140,6 +131,10 @@ describe('Acceptance: preprocessor-smoke-test', function () {
       |-- preprocessor should not apply to this
   */
   it('addon N levels deep depending on preprocessor preprocesses that parent addon only', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles(`preprocessor-tests/app-with-addon-with-preprocessors-3`);
 
     let packageJsonPath = path.join(appRoot, 'package.json');

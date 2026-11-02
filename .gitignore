@@ -3,8 +3,8 @@
 /.nyc_output/
 /docs/build/
 /node_modules/
+/packages/*/node_modules/
 /tmp/
-/.deps-tmp/
 *.log
 *.tgz
 *.pem

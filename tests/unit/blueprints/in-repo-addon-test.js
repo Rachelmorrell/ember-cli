@@ -2,15 +2,11 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const blueprintHelpers = require('ember-cli-blueprint-test-helpers/helpers');
-let setupTestHooks = blueprintHelpers.setupTestHooks;
-let emberNew = blueprintHelpers.emberNew;
-let emberGenerate = blueprintHelpers.emberGenerate;
-let emberDestroy = blueprintHelpers.emberDestroy;
+const { emberDestroy, emberGenerate, emberNew, setupTestHooks } = require('ember-cli-blueprint-test-helpers/helpers');
 const td = require('testdouble');
 
-const expect = require('ember-cli-blueprint-test-helpers/chai').expect;
-const file = require('ember-cli-blueprint-test-helpers/chai').file;
+const { expect } = require('chai');
+const { file } = require('chai-files');
 
 describe('Acceptance: ember generate and destroy in-repo-addon', function () {
   setupTestHooks(this, {
@@ -47,7 +43,7 @@ describe('Acceptance: ember generate and destroy in-repo-addon', function () {
         expect(file('lib/foo-bar/package.json')).to.not.exist;
         expect(file('lib/foo-bar/index.js')).to.not.exist;
 
-        expect(fs.readJsonSync('package.json')['ember-addon']['paths']).to.be.undefined;
+        expect(fs.readJsonSync('package.json')['ember-addon']).to.be.undefined;
       });
   });
 });
@@ -152,9 +148,10 @@ describe('Unit: in-repo-addon blueprint', function () {
     );
   });
 
-  it('removes paths if last one', function () {
+  it('removes the `paths` array if the removed path was the last one', function () {
     td.when(readJsonSync(), { ignoreExtraArgs: true }).thenReturn({
       'ember-addon': {
+        configPath: 'tests/dummy/config',
         paths: ['lib/test-entity-name'],
       },
     });
@@ -166,10 +163,50 @@ describe('Unit: in-repo-addon blueprint', function () {
     td.verify(readJsonSync(path.normalize('test-project-root/package.json')));
     td.verify(writeFileSync(path.normalize('test-project-root/package.json'), captor.capture()));
 
-    expect(captor.value).to.equal('\
-{\n\
-  "ember-addon": {}\n\
-}\n');
+    expect(captor.value).to.equal(`{
+  "ember-addon": {
+    "configPath": "tests/dummy/config"
+  }
+}
+`);
+  });
+
+  it('removes the `paths` array if it was already empty', function () {
+    td.when(readJsonSync(), { ignoreExtraArgs: true }).thenReturn({
+      'ember-addon': {
+        configPath: 'tests/dummy/config',
+        paths: [],
+      },
+    });
+
+    blueprint.afterUninstall(options);
+
+    let captor = td.matchers.captor();
+
+    td.verify(writeFileSync(path.normalize('test-project-root/package.json'), captor.capture()));
+
+    expect(captor.value).to.equal(`{
+  "ember-addon": {
+    "configPath": "tests/dummy/config"
+  }
+}
+`);
+  });
+
+  it('removes the `ember-addon` object if it is empty', function () {
+    td.when(readJsonSync(), { ignoreExtraArgs: true }).thenReturn({
+      'ember-addon': {
+        paths: ['lib/test-entity-name'],
+      },
+    });
+
+    blueprint.afterUninstall(options);
+
+    let captor = td.matchers.captor();
+
+    td.verify(writeFileSync(path.normalize('test-project-root/package.json'), captor.capture()));
+
+    expect(captor.value).to.equal('{}\n');
   });
 
   it('alphabetizes paths', function () {

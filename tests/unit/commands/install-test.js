@@ -1,6 +1,6 @@
 'use strict';
 
-const expect = require('../../chai').expect;
+const { expect } = require('chai');
 const MockProject = require('../../helpers/mock-project');
 const commandOptions = require('../../factories/command-options');
 const Task = require('../../../lib/models/task');
@@ -50,21 +50,25 @@ describe('install command', function () {
 
     tasks = {
       AddonInstall,
-      NpmInstall: Task.extend({
-        project,
+      NpmInstall: class extends Task {
         init() {
-          this._super.apply(this, arguments);
-          npmInstance = this;
-        },
-      }),
+          super.init(...arguments);
 
-      GenerateFromBlueprint: Task.extend({
-        project,
+          this.project = project;
+
+          npmInstance = this;
+        }
+      },
+
+      GenerateFromBlueprint: class extends Task {
         init() {
-          this._super.apply(this, arguments);
+          super.init(...arguments);
+
+          this.project = project;
+
           generateBlueprintInstance = this;
-        },
-      }),
+        }
+      },
     };
 
     let options = commandOptions({
@@ -83,15 +87,13 @@ describe('install command', function () {
     td.reset();
   });
 
-  it('initializes npm install and generate blueprint task with ui, project and analytics', function () {
+  it('initializes npm install and generate blueprint task with ui and project', function () {
     return command.validateAndRun(['ember-data']).then(function () {
       expect(npmInstance.ui, 'ui was set').to.be.ok;
       expect(npmInstance.project, 'project was set').to.be.ok;
-      expect(npmInstance.analytics, 'analytics was set').to.be.ok;
 
       expect(generateBlueprintInstance.ui, 'ui was set').to.be.ok;
       expect(generateBlueprintInstance.project, 'project was set').to.be.ok;
-      expect(generateBlueprintInstance.analytics, 'analytics was set').to.be.ok;
     });
   });
 
@@ -306,9 +308,8 @@ describe('install command', function () {
     it('gives a helpful message if no arguments are passed', function () {
       return expect(command.validateAndRun([])).to.be.rejected.then((error) => {
         expect(error.message).to.equal(
-          'The `install` command must take an argument with the name ' +
-            'of an ember-cli addon. For installing all npm and bower ' +
-            'dependencies you can run `npm install && bower install`.',
+          // TODO: Make this package-manager agnostic?
+          "An addon's name is required when running the `install` command. If you want to install all node modules, please run `pnpm install` instead.",
           'expect error to have a helpful message'
         );
       });

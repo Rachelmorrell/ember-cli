@@ -2,14 +2,14 @@
 
 const fs = require('fs');
 const path = require('path');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 
+const { DEPRECATIONS } = require('../../../lib/debug');
 const emberAppUtils = require('../../../lib/utilities/ember-app-utils');
 
 const contentFor = emberAppUtils.contentFor;
 const configReplacePatterns = emberAppUtils.configReplacePatterns;
 const normalizeUrl = emberAppUtils.normalizeUrl;
-const calculateBaseTag = emberAppUtils.calculateBaseTag;
 const convertObjectToString = emberAppUtils.convertObjectToString;
 
 describe('ember-app-utils', function () {
@@ -130,44 +130,6 @@ describe('ember-app-utils', function () {
 
         expect(output, '`<meta>` tag was not included').not.to.contain(expected);
       });
-
-      it('returns `<base>` tag if `locationType` is "auto"', function () {
-        config.locationType = 'auto';
-        config.baseURL = '/';
-
-        let expected = '<base href="/" />';
-        let output = contentFor(config, defaultMatch, 'head', defaultOptions);
-
-        expect(output, '`<base>` tag was included').to.contain(expected);
-      });
-
-      // this is required by testem
-      it('returns `<base>` tag if `locationType` is "none"', function () {
-        config.locationType = 'none';
-        config.baseURL = '/';
-
-        let output = contentFor(config, defaultMatch, 'head', defaultOptions);
-        let expected = '<base href="/" />';
-
-        expect(output, '`<base>` tag was included').to.contain(expected);
-      });
-
-      it('omits `<base>` tag if `locationType` is "hash"', function () {
-        config.locationType = 'hash';
-        config.baseURL = '/foo/bar';
-
-        let expected = '<base href="/foo/bar/" />';
-        let output = contentFor(config, defaultMatch, 'head', defaultOptions);
-
-        expect(output, '`<base>` tag was not included').to.not.contain(expected);
-      });
-
-      it('omits `<base>` tag if `baseURL` is `undefined`', function () {
-        let expected = '<base href=';
-        let output = contentFor(config, defaultMatch, 'head', defaultOptions);
-
-        expect(output, '`<base>` tag was not included').to.not.contain(expected);
-      });
     });
 
     describe('"config-module"', function () {
@@ -272,24 +234,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
         expect(output).to.equal('blammo\nblahzorz');
       });
-    });
-  });
 
-  describe(`calculateBaseTag`, function () {
-    ['auto', 'history'].forEach((locationType) => {
-      it(`generates a base tag correctly for location: ${locationType}`, function () {
-        expect(calculateBaseTag('/', locationType), `base tag was generated correctly`).to.equal('<base href="/" />');
-      });
-    });
+      for (const deprecatedType of DEPRECATIONS.V1_ADDON_CONTENT_FOR_TYPES.options.meta.types) {
+        it(`shows a deprecation warning when using the deprecated \`${deprecatedType}\` \`contentFor\` type`, function () {
+          if (DEPRECATIONS.V1_ADDON_CONTENT_FOR_TYPES.isRemoved) {
+            this.skip();
+          }
 
-    it('returns an empty string if location is "hash"', function () {
-      expect(calculateBaseTag('/', 'hash'), `base tag was generated correctly`).to.equal('');
-    });
+          const consoleWarn = console.warn;
+          const deprecations = [];
 
-    [null, undefined, ''].forEach((url) => {
-      it(`returns an empty string if the url is ${url === '' ? 'empty string' : url}`, function () {
-        expect(calculateBaseTag(url, 'hash')).to.equal('');
-      });
+          // TODO: This should be updated once we can register deprecation handlers:
+          console.warn = (deprecation) => deprecations.push(deprecation);
+
+          const addons = [
+            {
+              name: 'foo',
+              contentFor(type) {
+                if (type === deprecatedType) {
+                  return `${deprecatedType}-content`;
+                }
+              },
+            },
+            {
+              contentFor(type) {
+                if (type === 'foo') {
+                  return 'foo-content';
+                }
+              },
+            },
+          ];
+
+          const options = { ...defaultOptions, addons };
+
+          let content = '';
+          content += contentFor(config, defaultMatch, deprecatedType, options);
+          content += contentFor(config, defaultMatch, 'foo', options);
+
+          expect(content).to.equal(`${deprecatedType}-contentfoo-content`);
+          expect(deprecations.length).to.equal(1);
+          expect(deprecations[0]).to.include(
+            `Addon \`foo\` is using the deprecated \`${deprecatedType}\` type in its \`contentFor\` method.`
+          );
+
+          console.warn = consoleWarn;
+        });
+      }
     });
   });
 

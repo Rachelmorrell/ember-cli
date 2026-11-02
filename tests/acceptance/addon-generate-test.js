@@ -4,14 +4,12 @@ const ember = require('../helpers/ember');
 const path = require('path');
 const fs = require('fs-extra');
 let root = process.cwd();
-let tmproot = path.join(root, 'tmp');
-const Blueprint = require('../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const BlueprintNpmTask = require('ember-cli-internal-test-helpers/lib/helpers/disable-npm-on-blueprint');
-const mkTmpDirIn = require('../../lib/utilities/mk-tmp-dir-in');
+const tmp = require('tmp-promise');
 
-const chai = require('../chai');
-let expect = chai.expect;
-let file = chai.file;
+const { expect } = require('chai');
+const { file } = require('chai-files');
 
 describe('Acceptance: ember generate in-addon', function () {
   this.timeout(20000);
@@ -25,23 +23,16 @@ describe('Acceptance: ember generate in-addon', function () {
   });
 
   beforeEach(async function () {
-    let tmpdir = await mkTmpDirIn(tmproot);
-    process.chdir(tmpdir);
+    const { path } = await tmp.dir();
+    process.chdir(path);
   });
 
   afterEach(function () {
     process.chdir(root);
-    return fs.remove(tmproot);
   });
 
   function initAddon(name) {
-    return ember(['addon', name, '--skip-npm', '--skip-bower']).then(addJSHint);
-  }
-
-  function addJSHint() {
-    let pkg = fs.readJsonSync('package.json');
-    pkg.devDependencies['ember-cli-jshint'] = '*';
-    fs.writeJsonSync('package.json', pkg);
+    return ember(['addon', name, '--skip-npm']);
   }
 
   function generateInAddon(args) {
@@ -115,8 +106,6 @@ describe('Acceptance: ember generate in-addon', function () {
     expect(file('server/index.js')).to.contain('mocks.forEach(route => route(app));');
 
     expect(file('server/mocks/foo.js').content).to.matchSnapshot();
-
-    expect(file('server/.jshintrc')).to.contain('{\n  "node": true\n}');
   });
 
   it('in-addon http-mock foo-bar', async function () {
@@ -125,8 +114,6 @@ describe('Acceptance: ember generate in-addon', function () {
     expect(file('server/index.js')).to.contain('mocks.forEach(route => route(app));');
 
     expect(file('server/mocks/foo-bar.js').content).to.matchSnapshot();
-
-    expect(file('server/.jshintrc')).to.contain('{\n  "node": true\n}');
   });
 
   it('in-addon http-proxy foo', async function () {
@@ -135,12 +122,23 @@ describe('Acceptance: ember generate in-addon', function () {
     expect(file('server/index.js')).to.contain('proxies.forEach(route => route(app));');
 
     expect(file('server/proxies/foo.js').content).to.matchSnapshot();
-
-    expect(file('server/.jshintrc')).to.contain('{\n  "node": true\n}');
   });
 
   it('in-addon server', async function () {
     await generateInAddon(['server']);
     expect(file('server/index.js')).to.exist;
+  });
+
+  it('successfully generates the default blueprint for scoped addons', async function () {
+    await initAddon('@foo/bar');
+    await ember(['g', 'blueprint', '@foo/bar']);
+    await fs.outputFile('blueprints/@foo/bar/files/__name__.js', '');
+    await ember(['g', '@foo/bar', 'baz']);
+
+    expect(file('baz.js')).to.exist;
+  });
+
+  it(`throws the unknown blueprint error when \`name\` matches a folder's name, but doesn't include the \`${path.sep}\` char`, async function () {
+    await expect(generateInAddon(['tests'])).to.be.rejectedWith('Unknown blueprint: tests');
   });
 });

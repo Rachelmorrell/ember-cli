@@ -4,25 +4,19 @@ const fs = require('fs-extra');
 const path = require('path');
 const BuildCommand = require('../../../lib/commands/build');
 const commandOptions = require('../../factories/command-options');
-const rimraf = require('rimraf');
 const fixturify = require('fixturify');
 const MockProject = require('../../helpers/mock-project');
-const mkTmpDirIn = require('../../../lib/utilities/mk-tmp-dir-in');
 const td = require('testdouble');
-const chai = require('../../chai');
-let expect = chai.expect;
-let file = chai.file;
-
-let root = process.cwd();
-let tmpRoot = path.join(root, 'tmp');
+const { expect } = require('chai');
+const { file } = require('chai-files');
+const tmp = require('tmp-promise');
 
 let Builder;
 
 describe('models/builder.js', function () {
   let addon, builder, buildResults, tmpdir;
 
-  function setupBroccoliBuilder() {
-    this.broccoliBuilderFallback = false;
+  async function setupBroccoliBuilder() {
     this.builder = {
       outputPath: 'build results',
       outputNodeWrapper: {
@@ -56,17 +50,14 @@ describe('models/builder.js', function () {
 
   describe('copyToOutputPath', function () {
     beforeEach(async function () {
-      tmpdir = await mkTmpDirIn(tmpRoot);
+      const { path } = await tmp.dir();
+      tmpdir = path;
       let project = new MockProject();
       builder = new Builder({
         project,
         ui: project.ui,
         setupBroccoliBuilder,
       });
-    });
-
-    afterEach(function () {
-      return fs.remove(tmpRoot);
     });
 
     it('allows for non-existent output-paths at arbitrary depth', function () {
@@ -155,7 +146,7 @@ describe('models/builder.js', function () {
       delete process.env.BROCCOLI_VIZ;
       builder.project.ui.output = '';
       if (fs.existsSync(`${builder.project.root}/tmp`)) {
-        rimraf.sync(`${builder.project.root}/tmp`);
+        fs.removeSync(`${builder.project.root}/tmp`);
       }
     });
 
@@ -176,24 +167,6 @@ describe('models/builder.js', function () {
       );
     });
 
-    it('prints a deprecation warning if it discovers a < v0.1.4 version of heimdalljs', async function () {
-      process._heimdall = {};
-
-      await builder.build();
-
-      let output = builder.project.ui.output;
-      expect(output).to.include('Heimdalljs < 0.1.4 found.  Please remove old versions');
-    });
-
-    it('does not print a deprecation warning if it does not discover a < v0.1.4 version of heimdalljs', async function () {
-      expect(process._heimdall).to.equal(undefined);
-
-      await builder.build();
-
-      let output = builder.project.ui.output;
-      expect(output).to.not.include('Heimdalljs < 0.1.4 found.  Please remove old versions');
-    });
-
     it('writes temp files to Broccoli temp dir', async function () {
       const project = new MockProject();
       project.root += '/tests/fixtures/build/simple';
@@ -211,7 +184,7 @@ describe('models/builder.js', function () {
       let result = await builder.build();
       expect(fs.existsSync(result.directory)).to.be.true;
       expect(fs.existsSync(`${builder.project.root}/tmp`)).to.be.false;
-      rimraf.sync(result.directory);
+      fs.removeSync(result.directory);
     });
 
     it('produces the correct output', async function () {
@@ -227,6 +200,26 @@ describe('models/builder.js', function () {
         });
 
       let result = await setup().build();
+
+      expect(fixturify.readSync(result.directory)).to.deep.equal(fixturify.readSync(`${project.root}/dist`));
+    });
+
+    // packages using node's module support (via type=module) need to have
+    // ember-cli-build.cjs rather than ember-cli.js in order for require to
+    // work correctly
+    it('builds packages using ESM', async function () {
+      const project = new MockProject();
+      project.root += '/tests/fixtures/build/node-esm';
+      const setupBuilder = () =>
+        new Builder({
+          project,
+          ui: project.ui,
+          copyToOutputPath() {
+            return [];
+          },
+        });
+
+      let result = await setupBuilder().build();
 
       expect(fixturify.readSync(result.directory)).to.deep.equal(fixturify.readSync(`${project.root}/dist`));
     });
@@ -258,10 +251,15 @@ describe('models/builder.js', function () {
         project,
         ui: project.ui,
         setupBroccoliBuilder,
+        copyToOutputPath() {
+          return [];
+        },
       });
     });
 
     it('is idempotent', async function () {
+      await builder.build();
+
       let cleanupCount = 0;
       builder.builder.cleanup = function () {
         cleanupCount++;
@@ -308,8 +306,8 @@ describe('models/builder.js', function () {
       project.addons = [addon];
 
       builder = new Builder({
-        setupBroccoliBuilder() {
-          setupBroccoliBuilder.call(this);
+        async setupBroccoliBuilder() {
+          await setupBroccoliBuilder.call(this);
           let originalBuild = this.builder.build;
           this.builder.build = () => {
             hooksCalled.push('build');
@@ -425,6 +423,7 @@ describe('models/builder.js', function () {
         receivedBuildError = errorThrown;
       };
 
+      await builder.setupBroccoliBuilder();
       builder.builder.build = function () {
         hooksCalled.push('build');
 
@@ -447,6 +446,7 @@ describe('models/builder.js', function () {
     });
 
     it('calls buildError and does not call postBuild or outputReady when build fails', async function () {
+      await builder.setupBroccoliBuilder();
       builder.builder.build = function () {
         hooksCalled.push('build');
 
@@ -478,44 +478,19 @@ describe('models/builder.js', function () {
       await expect(builder.build()).to.be.rejected;
       expect(hooksCalled).to.deep.equal(['preBuild', 'build', 'postBuild', 'outputReady', 'buildError']);
     });
-  });
 
-  describe('fallback from broccoli 2 to broccoli-builder', function () {
-    it('falls back to broccoli-builder if an InvalidNode error is thrown for read/rebuild api', function () {
-      let project = new MockProject();
-      const builder = new Builder({
-        project,
-        ui: project.ui,
-        readBuildFile() {
-          return {
-            read() {},
-            rebuild() {},
-          };
-        },
-      });
+    it('sets `isBuilderError` on handled addon errors', async function () {
+      addon.postBuild = function () {
+        return Promise.reject(new Error('preBuild Error'));
+      };
 
-      expect(builder.broccoliBuilderFallback).to.be.true;
-
-      expect(project.ui.output).to.include(
-        'WARNING: Invalid Broccoli2 node detected, falling back to broccoli-builder. Broccoli error:'
-      );
-      expect(project.ui.output).to.include(
-        'Object: The .read/.rebuild API is no longer supported as of Broccoli 1.0. Plugins must now derive from broccoli-plugin. https://github.com/broccolijs/broccoli/blob/master/docs/broccoli-1-0-plugin-api.md'
-      );
-    });
-
-    it('errors for an invalid node', function () {
-      let project = new MockProject();
-      expect(
-        () =>
-          new Builder({
-            project,
-            ui: project.ui,
-            readBuildFile() {
-              return {};
-            },
-          })
-      ).to.throw('[object Object] is not a Broccoli node\nused as output node');
+      let error;
+      try {
+        await builder.build();
+      } catch (e) {
+        error = e;
+      }
+      expect(error).to.haveOwnProperty('isBuilderError', true);
     });
   });
 });

@@ -1,13 +1,13 @@
 'use strict';
 
-const expect = require('../../../chai').expect;
+const { expect } = require('chai');
 const ExpressServer = require('../../../../lib/tasks/server/express-server');
 const MockUI = require('console-ui/mock');
 const MockProject = require('../../../helpers/mock-project');
 const MockWatcher = require('../../../helpers/mock-watcher');
 const MockServerWatcher = require('../../../helpers/mock-server-watcher');
 const ProxyServer = require('../../../helpers/proxy-server');
-const chalk = require('chalk');
+const { default: chalk } = require('chalk');
 const request = require('supertest');
 const net = require('net');
 const EOL = require('os').EOL;
@@ -17,7 +17,7 @@ const WebSocket = require('websocket').w3cwebsocket;
 const FixturifyProject = require('../../../helpers/fixturify-project');
 
 function checkMiddlewareOptions(options) {
-  expect(options).to.satisfy((option) => option.baseURL || option.rootURL);
+  expect(options).to.satisfy((option) => option.rootURL);
 }
 
 function sleep(timeout) {
@@ -29,10 +29,10 @@ describe('express-server: processAppMiddlewares', function () {
 
   nock.enableNetConnect();
 
-  function makeSubject() {
+  async function makeSubject() {
     subject = new ExpressServer({
       ui: new MockUI(),
-      project: fixturifyProject.buildProjectModel(),
+      project: await fixturifyProject.buildProjectModel(),
       watcher: new MockWatcher(),
       serverWatcher: new MockServerWatcher(),
       serverRestartDelayTime: 100,
@@ -53,60 +53,60 @@ describe('express-server: processAppMiddlewares', function () {
     await subject.stopHttpServer().catch(() => {});
   });
 
-  it('has a good error message if a file "server.js" exists, but does not export a function', function () {
+  it('has a good error message if a file "server.js" exists, but does not export a function', async function () {
     fixturifyProject.addFiles({
       'server.js': 'module.exports = { name: "foo" }',
     });
-    let subject = makeSubject();
+    let subject = await makeSubject();
 
     expect(() => {
       subject.processAppMiddlewares();
     }).to.throw(TypeError, 'ember-cli expected ./server/index.js to be the entry for your mock or proxy server');
   });
 
-  it('has a good error message if a file "server/index.js" exists, but does not export a function', function () {
+  it('has a good error message if a file "server/index.js" exists, but does not export a function', async function () {
     fixturifyProject.addFiles({
       server: {
         'index.js': 'module.exports = { name: "foo" }',
       },
     });
 
-    let subject = makeSubject();
+    let subject = await makeSubject();
     expect(() => {
       subject.processAppMiddlewares();
     }).to.throw(TypeError, 'ember-cli expected ./server/index.js to be the entry for your mock or proxy server');
   });
 
-  it('returns values returned by server/index.js', function () {
+  it('returns values returned by server/index.js', async function () {
     fixturifyProject.addFiles({
       server: {
         'index.js': 'module.exports = function() {return "foo"}',
       },
     });
-    let subject = makeSubject();
+    let subject = await makeSubject();
     expect(subject.processAppMiddlewares()).to.equal('foo');
   });
 
-  it('returns values returned by server.js', function () {
+  it('returns values returned by server.js', async function () {
     fixturifyProject.addFiles({
       'server.js': 'module.exports = function() {return "foo"}',
     });
-    let subject = makeSubject();
+    let subject = await makeSubject();
     expect(subject.processAppMiddlewares()).to.equal('foo');
   });
 
-  it('returns undefined if middleware files does not exists', function () {
-    let subject = makeSubject();
+  it('returns undefined if middleware files does not exists', async function () {
+    let subject = await makeSubject();
     expect(subject.processAppMiddlewares()).to.equal(undefined);
   });
 
-  it('allow non MODULE_NOT_FOUND errors bubbling if issue happens during module initialization', function () {
+  it('allow non MODULE_NOT_FOUND errors bubbling if issue happens during module initialization', async function () {
     fixturifyProject.addFiles({
       server: {
         'index.js': 'throw new Error("OOPS")',
       },
     });
-    let subject = makeSubject();
+    let subject = await makeSubject();
     expect(() => subject.processAppMiddlewares()).to.throw(Error, 'OOPS');
   });
 });
@@ -341,7 +341,7 @@ describe('express-server', function () {
         project.require = function () {
           let app = express();
           app.use('/foo', function (req, res) {
-            res.set('x-no-compression', 'true'), res.send(longText);
+            (res.set('x-no-compression', 'true'), res.send(longText));
           });
           return app;
         };
@@ -508,6 +508,30 @@ describe('express-server', function () {
             expect(proxy.called, 'proxy receives the request').to.equal(true);
             done();
           });
+      });
+
+      it('handles errors gracefully when proxy target is down', function (done) {
+        proxy.httpServer.close();
+
+        request(subject.httpServer)
+          .get('/api/get')
+          .end(function (err, res) {
+            if (err) {
+              return done(err);
+            }
+            expect(res.status, 'proxied request fails gracefully').to.equal(502);
+            done();
+          });
+      });
+
+      it('handles websocket errors gracefully when proxy target is down', function (done) {
+        proxy.httpServer.close();
+
+        let client = new WebSocket('ws://localhost:1337/foo');
+        client.onerror = (error) => {
+          expect(error).to.be.ok;
+          done();
+        };
       });
     });
 
@@ -740,6 +764,27 @@ describe('express-server', function () {
         startServer('/foo').then(function () {
           request(subject.app)
             .get('/foo/someurl')
+            .set('accept', 'text/html')
+            .expect(200)
+            .expect('Content-Type', /html/)
+            .end(function (err) {
+              if (err) {
+                return done(err);
+              }
+              done();
+            });
+        });
+      });
+
+      it('serves index.html when file not found (with rootURL) with auto/history location on root url without trailing slash', function (done) {
+        project._config = {
+          rootURL: '/foo',
+          locationType: 'history',
+        };
+
+        startServer('/foo').then(function () {
+          request(subject.app)
+            .get('/foo')
             .set('accept', 'text/html')
             .expect(200)
             .expect('Content-Type', /html/)
@@ -1012,8 +1057,7 @@ describe('express-server', function () {
 
       it('calls processAppMiddlewares upon start', function () {
         let realOptions = {
-          baseURL: '/',
-          rootURL: undefined,
+          rootURL: '/',
           host: undefined,
           port: '1337',
         };
@@ -1026,8 +1070,7 @@ describe('express-server', function () {
 
       it('calls processAppMiddlewares upon restart', function () {
         let realOptions = {
-          baseURL: '/',
-          rootURL: undefined,
+          rootURL: '/',
           host: undefined,
           port: '1337',
         };

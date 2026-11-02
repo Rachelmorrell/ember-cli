@@ -1,6 +1,6 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const stringifyAndNormalize = require('../../../lib/utilities/stringify-and-normalize');
 
 describe('stringify-and-normalize', function () {
@@ -13,11 +13,13 @@ describe('stringify-and-normalize', function () {
   it('indents 2 spaces and ends in newline', function () {
     let string = stringifyAndNormalize(packageJson);
 
-    expect(string).to.equal('\
+    expect(string).to.equal(
+      '\
 {\n\
   "dependencies": {\n\
     "test-package": "^1.0.0"\n\
   }\n\
-}\n');
+}\n'
+    );
   });
 });

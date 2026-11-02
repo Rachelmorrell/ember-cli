@@ -1,6 +1,6 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const isLiveReloadRequest = require('../../../lib/utilities/is-live-reload-request');
 
 describe('isLiveReloadRequest()', function () {
@@ -8,10 +8,10 @@ describe('isLiveReloadRequest()', function () {
     expect(isLiveReloadRequest('/livereload', '/')).to.be.true;
   });
   it('path/livereload', function () {
-    expect(isLiveReloadRequest('path/livereload', 'path/')).to.be.true;
+    expect(isLiveReloadRequest('/path/livereload', 'path/')).to.be.true;
   });
   it('path/path/livereload', function () {
-    expect(isLiveReloadRequest('path/path/livereload', 'path/path/')).to.be.true;
+    expect(isLiveReloadRequest('/path/path/livereload', 'path/path/')).to.be.true;
   });
   it('livereload', function () {
     expect(isLiveReloadRequest('livereload', '/')).to.be.false;

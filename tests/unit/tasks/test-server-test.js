@@ -1,6 +1,6 @@
 'use strict';
 
-const expect = require('../../chai').expect;
+const { expect } = require('chai');
 const SilentError = require('silent-error');
 const TestServerTask = require('../../../lib/tasks/test-server');
 const MockProject = require('../../helpers/mock-project');
@@ -114,7 +114,7 @@ describe('test server', function () {
         };
 
         let runResult = expect(subject.run(runOptions)).to.be.rejected.then((reason) => {
-          expect(reason).to.eql(error);
+          expect(reason.message).to.eql(error.message);
         });
 
         watcher.emit('change');

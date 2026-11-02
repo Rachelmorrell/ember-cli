@@ -1,10 +1,10 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const DefaultPackager = require('../../../../lib/broccoli/default-packager');
 const broccoliTestHelper = require('broccoli-test-helper');
 
-const buildOutput = broccoliTestHelper.buildOutput;
+const createBuilder = broccoliTestHelper.createBuilder;
 const createTempDir = broccoliTestHelper.createTempDir;
 
 describe('Default Packager: Ember CLI Internal', function () {
@@ -55,7 +55,8 @@ describe('Default Packager: Ember CLI Internal', function () {
 
     expect(defaultPackager._cachedEmberCliInternalTree).to.equal(null);
 
-    output = await buildOutput(defaultPackager.packageEmberCliInternalFiles());
+    output = createBuilder(defaultPackager.packageEmberCliInternalFiles());
+    await output.build();
 
     expect(defaultPackager._cachedEmberCliInternalTree).to.not.equal(null);
     expect(defaultPackager._cachedEmberCliInternalTree._annotation).to.equal('Packaged Ember CLI Internal Files');
@@ -73,7 +74,8 @@ describe('Default Packager: Ember CLI Internal', function () {
 
     expect(defaultPackager._cachedEmberCliInternalTree).to.equal(null);
 
-    output = await buildOutput(defaultPackager.packageEmberCliInternalFiles());
+    output = createBuilder(defaultPackager.packageEmberCliInternalFiles());
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -105,7 +107,8 @@ describe('Default Packager: Ember CLI Internal', function () {
 
     expect(defaultPackager._cachedEmberCliInternalTree).to.equal(null);
 
-    output = await buildOutput(defaultPackager.packageEmberCliInternalFiles());
+    output = createBuilder(defaultPackager.packageEmberCliInternalFiles());
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -135,12 +138,26 @@ describe('Default Packager: Ember CLI Internal', function () {
     );
     expect(testSupportPrefixFileContent).to.equal('');
     expect(testSupportSuffixFileContent).to.contain(
-      'runningTests = true;\n\nif (window.Testem) {\n  window.Testem.hookIntoTestFramework();\n}'
+      `runningTests = true;\n\nif (typeof Testem !== 'undefined' && (typeof QUnit !== 'undefined' || typeof Mocha !== 'undefined')) {\n  window.Testem.hookIntoTestFramework();\n}`
     );
 
-    expect(vendorPrefixFileContent).to.contain(
-      'window.EmberENV = (function(EmberENV, extra) {\n  for (var key in extra) {\n    EmberENV[key] = extra[key];\n  }\n\n  return EmberENV;\n})(window.EmberENV || {}, {});\n\nvar runningTests = false;'
-    );
+    expect(vendorPrefixFileContent).to.contain(`window.EmberENV = (function(EmberENV, extra) {
+  for (var key in extra) {
+    EmberENV[key] = extra[key];
+  }
+
+  return EmberENV;
+})(window.EmberENV || {}, {});
+
+// used to determine if the application should be booted immediately when \`app-name.js\` is evaluated
+// when \`runningTests\` the \`app-name.js\` file will **not** import the applications \`app/app.js\` and
+// call \`Application.create(...)\` on it. Additionally, applications can opt-out of this behavior by
+// setting \`autoRun\` to \`false\` in their \`ember-cli-build.js\`
+//
+// The default \`test-support.js\` file will set this to \`true\` when it runs (so that Application.create()
+// is not ran when running tests).
+var runningTests = false;`);
+
     expect(vendorSuffixFileContent).to.equal('');
   });
 
@@ -156,7 +173,8 @@ describe('Default Packager: Ember CLI Internal', function () {
 
     expect(defaultPackager._cachedEmberCliInternalTree).to.equal(null);
 
-    output = await buildOutput(defaultPackager.packageEmberCliInternalFiles());
+    output = createBuilder(defaultPackager.packageEmberCliInternalFiles());
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -175,8 +193,8 @@ describe('Default Packager: Ember CLI Internal', function () {
         addons: [
           {
             contentFor(type) {
-              if (type === 'app-prefix') {
-                return 'CUSTOM APP PREFIX CODE';
+              if (type === 'test-support-prefix') {
+                return 'CUSTOM TEST SUPPORT PREFIX CODE';
               }
             },
           },
@@ -206,15 +224,16 @@ describe('Default Packager: Ember CLI Internal', function () {
 
     expect(defaultPackager._cachedEmberCliInternalTree).to.equal(null);
 
-    output = await buildOutput(defaultPackager.packageEmberCliInternalFiles());
+    output = createBuilder(defaultPackager.packageEmberCliInternalFiles());
+    await output.build();
 
     let outputFiles = output.read();
 
     let emberCliFiles = outputFiles.vendor['ember-cli'];
     let appBootFileContent = emberCliFiles['app-boot.js'].trim();
-    let appPrefixFileContent = emberCliFiles['app-prefix.js'].trim();
+    let testSupportPrefixFileContent = emberCliFiles['test-support-prefix.js'].trim();
 
     expect(appBootFileContent).to.equal('CUSTOM APP BOOT CODE');
-    expect(appPrefixFileContent).to.equal(`'use strict';\n\nCUSTOM APP PREFIX CODE`);
+    expect(testSupportPrefixFileContent).to.equal('CUSTOM TEST SUPPORT PREFIX CODE');
   });
 });

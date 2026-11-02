@@ -1,8 +1,8 @@
 'use strict';
 
-const chalk = require('chalk');
+const { default: chalk } = require('chalk');
 const spawn = require('child_process').spawn;
-const defaults = require('ember-cli-lodash-subset').defaults;
+const defaults = require('lodash/defaults');
 const killCliProcess = require('./kill-cli-process');
 const logOnFailure = require('./log-on-failure');
 let debug = require('heimdalljs-logger')('run-command');

@@ -1,23 +1,41 @@
+Requested ember-cli commands:
+
+ember generate <blueprint> <options...>
+  Generates new code from blueprints.
+  aliases: g
+  --dry-run (Boolean) (Default: false)
+    aliases: -d
+  --verbose (Boolean) (Default: false)
+    aliases: -v
+  --pod (Boolean) (Default: false)
+    aliases: -p, -pods
+  --classic (Boolean) (Default: false)
+    aliases: -c
+  --in-repo-addon (String) (Default: null)
+    aliases: --in-repo <value>, -ir <value>
+  --lint-fix (Boolean) (Default: true)
+  --in (String) (Default: null) Runs a blueprint against an in repo addon. A path is expected, relative to the root of the project.
+  --typescript (Boolean) Generates a version of the blueprint written in TypeScript (if available).
+    aliases: -ts
+
 
   Available blueprints:
     ember-cli:
-      addon \u001b[33m<name>\u001b[39m
-        \u001b[90mThe default blueprint for ember-cli addons.\u001b[39m
-      addon-import \u001b[33m<name>\u001b[39m
-        \u001b[90mGenerates an import wrapper.\u001b[39m
-      app \u001b[33m<name>\u001b[39m
-        \u001b[90mThe default blueprint for ember-cli projects.\u001b[39m
-      blueprint \u001b[33m<name>\u001b[39m
-        \u001b[90mGenerates a blueprint and definition.\u001b[39m
-      http-mock \u001b[33m<endpoint-path>\u001b[39m
-        \u001b[90mGenerates a mock api endpoint in /api prefix.\u001b[39m
-      http-proxy \u001b[33m<local-path> <remote-url>\u001b[39m
-        \u001b[90mGenerates a relative proxy to another server.\u001b[39m
-      in-repo-addon \u001b[33m<name>\u001b[39m
-        \u001b[90mThe blueprint for addon in repo ember-cli addons.\u001b[39m
-      lib \u001b[33m<name>\u001b[39m
-        \u001b[90mGenerates a lib directory for in-repo addons.\u001b[39m
-      server \u001b[33m<name>\u001b[39m
-        \u001b[90mGenerates a server directory for mocks and proxies.\u001b[39m
-      vendor-shim \u001b[33m<name>\u001b[39m
-        \u001b[90mGenerates an ES6 module shim for global libraries.\u001b[39m
+      addon <name>
+        The default blueprint for ember-cli addons.
+      addon-import <name>
+        Generates an import wrapper.
+      app <name>
+        The default blueprint for ember-cli projects.
+      blueprint <name>
+        Generates a blueprint and definition.
+      http-mock <endpoint-path>
+        [Classic Only] Generates a mock api endpoint in /api prefix.
+      http-proxy <local-path> <remote-url>
+        [Classic Only] Generates a relative proxy to another server.
+      in-repo-addon <name>
+        The blueprint for addon in repo ember-cli addons.
+      lib <name>
+        Generates a lib directory for in-repo addons.
+      server <name>
+        [Classic Only] Generates a server directory for mocks and proxies.

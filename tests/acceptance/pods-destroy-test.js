@@ -1,26 +1,19 @@
 'use strict';
 
 const ember = require('../helpers/ember');
-const fs = require('fs-extra');
-const util = require('util');
+const { outputFile } = require('fs-extra');
 const replaceFile = require('ember-cli-internal-test-helpers/lib/helpers/file-utils').replaceFile;
-let outputFile = util.promisify(fs.outputFile);
-const path = require('path');
-let remove = util.promisify(fs.remove);
 let root = process.cwd();
-let tmproot = path.join(root, 'tmp');
-const mkTmpDirIn = require('../../lib/utilities/mk-tmp-dir-in');
+const tmp = require('tmp-promise');
 
-const Blueprint = require('../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const BlueprintNpmTask = require('ember-cli-internal-test-helpers/lib/helpers/disable-npm-on-blueprint');
 
-const chai = require('../chai');
-let expect = chai.expect;
-let file = chai.file;
+const { expect } = require('chai');
+const { file } = require('chai-files');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 
 describe('Acceptance: ember destroy pod', function () {
-  let tmpdir;
-
   this.timeout(20000);
 
   before(function () {
@@ -32,19 +25,18 @@ describe('Acceptance: ember destroy pod', function () {
   });
 
   beforeEach(async function () {
-    tmpdir = await mkTmpDirIn(tmproot);
-    process.chdir(tmpdir);
+    const { path } = await tmp.dir();
+    process.chdir(path);
   });
 
   afterEach(function () {
     this.timeout(10000);
 
     process.chdir(root);
-    return remove(tmproot);
   });
 
   function initApp() {
-    return ember(['init', '--name=my-app', '--skip-npm', '--skip-bower']);
+    return ember(['init', '--name=my-app', '--skip-npm']);
   }
 
   function generate(args) {
@@ -106,6 +98,9 @@ describe('Acceptance: ember destroy pod', function () {
   });
 
   it('http-mock foo --pod', function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
     let commandArgs = ['http-mock', 'foo', '--pod'];
     let files = ['server/mocks/foo.js'];
 
@@ -113,6 +108,9 @@ describe('Acceptance: ember destroy pod', function () {
   });
 
   it('http-proxy foo --pod', function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
     let commandArgs = ['http-proxy', 'foo', 'bar', '--pod'];
     let files = ['server/proxies/foo.js'];
 

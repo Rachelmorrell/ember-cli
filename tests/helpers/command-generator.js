@@ -1,6 +1,6 @@
 'use strict';
 
-const execa = require('../../lib/utilities/execa');
+const { execaSync } = require('execa');
 
 /**
  * A simple tool to make behavior and API consistent between commands
@@ -9,8 +9,8 @@ const execa = require('../../lib/utilities/execa');
  * Usage:
  *
  * ```
- * var bower = new CommandGenerator(require.resolve('bower/bin/bower'));
- * bower.invoke('install', 'ember');
+ * let npm = new CommandGenerator('npm');
+ * npm.invoke('install', 'ember-source', '--save-dev');
  * ```
  *
  * @private
@@ -45,6 +45,6 @@ module.exports = class CommandGenerator {
   }
 
   _invoke(args, options) {
-    return execa.sync(this.program, args, options);
+    return execaSync(this.program, args, options);
   }
 };

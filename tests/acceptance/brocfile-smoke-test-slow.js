@@ -3,7 +3,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 
-const { isExperimentEnabled } = require('../../lib/experiments');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 const runCommand = require('../helpers/run-command');
 const acceptance = require('../helpers/acceptance');
 const copyFixtureFiles = require('../helpers/copy-fixture-files');
@@ -13,10 +13,8 @@ let teardownTestTargets = acceptance.teardownTestTargets;
 let linkDependencies = acceptance.linkDependencies;
 let cleanupRun = acceptance.cleanupRun;
 
-const chai = require('../chai');
-let expect = chai.expect;
-let file = chai.file;
-let dir = chai.dir;
+const { expect } = require('chai');
+const { dir, file } = require('chai-files');
 
 let appName = 'some-cool-app';
 let appRoot;
@@ -57,11 +55,51 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('a custom environment config can be used in Brocfile.js', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/custom-environment-config');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test');
   });
 
+  it('builds with an ES modules ember-cli-build.js', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
+    await fs.writeFile(
+      'ember-cli-build.js',
+      `
+      import EmberApp from 'ember-cli/lib/broccoli/ember-app.js';
+
+      export default async function (defaults) {
+        const app = new EmberApp(defaults, { });
+
+        return app.toTree();
+      };
+    `
+    );
+
+    let appPackageJson = await fs.readJson('package.json');
+    appPackageJson.type = 'module';
+    await fs.writeJson('package.json', appPackageJson);
+
+    // lib/utilities/find-build-file.js uses await import and so can handle ES module ember-cli-build.js
+    //
+    // However, broccoli-config-loader uses require, so files like
+    // config/environment.js must be in commonjs format. The way to mix ES and
+    // commonjs formats in node is with multiple `package.json`s
+    await fs.writeJson('config/package.json', { type: 'commonjs' });
+    console.log(process.cwd());
+    await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
+  });
+
   it('without app/templates', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/pods-templates');
     await fs.remove(path.join(process.cwd(), 'app/templates'));
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test');
@@ -87,6 +125,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('using autoRun: true', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/auto-run-true');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
 
@@ -99,6 +141,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('using autoRun: false', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/auto-run-false');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
 
@@ -111,7 +157,7 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   // we dont run postprocessTree in embroider
-  if (!isExperimentEnabled('EMBROIDER')) {
+  if (!isExperimentEnabled('EMBROIDER') && !isExperimentEnabled('VITE')) {
     it('app.import works properly with test tree files', async function () {
       await copyFixtureFiles('brocfile-tests/app-test-import');
 
@@ -119,6 +165,14 @@ describe('Acceptance: brocfile-smoke-test', function () {
       let packageJson = fs.readJsonSync(packageJsonPath);
       packageJson.devDependencies['ember-test-addon'] = 'latest';
       fs.writeJsonSync(packageJsonPath, packageJson);
+
+      // we need to copy broccoli-plugin into the addon's node_modules to make up for the fact
+      // that the mock 'ember-test-addon' does not have a dependency install step
+      fs.mkdirSync(path.join(appRoot, 'node_modules', 'ember-test-addon', 'node_modules'));
+      await fs.copy(
+        path.join('..', '..', 'node_modules', 'broccoli-plugin'),
+        path.join(appRoot, 'node_modules', 'ember-test-addon', 'node_modules', 'broccoli-plugin')
+      );
 
       await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
 
@@ -162,16 +216,28 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('using pods based templates', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/pods-templates');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test');
   });
 
   it('using pods based templates with a podModulePrefix', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/pods-with-prefix-templates');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test');
   });
 
   it('addon trees are not jshinted', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/jshint-addon');
 
     let packageJsonPath = path.join(appRoot, 'package.json');
@@ -189,6 +255,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('multiple css files in styles/ are output when a preprocessor is not used', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/multiple-css-files');
 
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
@@ -200,35 +270,6 @@ describe('Acceptance: brocfile-smoke-test', function () {
       expect(file(path.join(basePath, f))).to.exist;
     });
   });
-
-  // custom outputPaths are deprecated under embroider
-  if (!isExperimentEnabled('EMBROIDER')) {
-    // skipping this as it seems this functionality doesn't work with ember-auto-import@2.2.3
-    it.skip('specifying custom output paths works properly', async function () {
-      await copyFixtureFiles('brocfile-tests/custom-output-paths');
-
-      let themeCSSPath = path.join(appRoot, 'app', 'styles', 'theme.css');
-      fs.writeFileSync(themeCSSPath, 'html, body { margin: 20%; }');
-
-      await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
-
-      let files = [
-        '/css/app.css',
-        '/css/theme/a.css',
-        '/js/app.js',
-        '/css/vendor.css',
-        '/js/vendor.js',
-        '/css/test-support.css',
-        '/js/test-support.js',
-        '/my-app.html',
-      ];
-
-      let basePath = path.join(appRoot, 'dist');
-      files.forEach(function (f) {
-        expect(file(path.join(basePath, f))).to.exist;
-      });
-    });
-  }
 
   // skipping this as it seems this functionality doesn't work with ember-auto-import@2.2.3
   it.skip('specifying outputFile results in an explicitly generated assets', async function () {
@@ -244,6 +285,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('can use transformation to turn anonymous AMD into named AMD', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/app-import-anonymous-amd');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
 
@@ -268,6 +313,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('can use transformation to turn named UMD into named AMD', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/app-import-named-umd');
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
 
@@ -292,6 +341,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('can do amd transform from addon', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/app-import-custom-transform');
 
     let packageJsonPath = path.join(appRoot, 'package.json');
@@ -322,6 +375,10 @@ describe('Acceptance: brocfile-smoke-test', function () {
   });
 
   it('can use transformation to turn library into custom transformation', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/app-import-custom-transform');
 
     let packageJsonPath = path.join(appRoot, 'package.json');
@@ -341,83 +398,25 @@ describe('Acceptance: brocfile-smoke-test', function () {
     ).to.be;
   });
 
-  // custom outputPaths are deprecated under embroider
-  if (!isExperimentEnabled('EMBROIDER')) {
-    // skipped because of potentially broken assertion that should be fixed correctly at a later point
-    it.skip('specifying partial `outputPaths` hash deep merges options correctly', async function () {
-      await copyFixtureFiles('brocfile-tests/custom-output-paths');
-
-      let themeCSSPath = path.join(appRoot, 'app', 'styles', 'theme.css');
-      fs.writeFileSync(themeCSSPath, 'html, body { margin: 20%; }');
-
-      let brocfilePath = path.join(appRoot, 'ember-cli-build.js');
-      let brocfile = fs.readFileSync(brocfilePath, 'utf8');
-
-      // remove outputPaths.app.js option
-      brocfile = brocfile.replace(/js: '\/js\/app.js'/, '');
-      // remove outputPaths.app.css.app option
-      brocfile = brocfile.replace(/'app': '\/css\/app\.css',/, '');
-
-      fs.writeFileSync(brocfilePath, brocfile, 'utf8');
-
-      await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
-
-      let files = [
-        '/css/theme/a.css',
-        '/assets/some-cool-app.js',
-        '/css/vendor.css',
-        '/js/vendor.js',
-        '/css/test-support.css',
-        '/js/test-support.js',
-      ];
-
-      let basePath = path.join(appRoot, 'dist');
-      files.forEach(function (f) {
-        expect(file(path.join(basePath, f))).to.exist;
-      });
-
-      expect(file(path.join(basePath, '/assets/some-cool-app.css'))).to.not.exist;
-    });
-  }
-
-  // custom outputPaths are deprecated under embroider
-  if (!isExperimentEnabled('EMBROIDER')) {
-    it('multiple paths can be CSS preprocessed', async function () {
-      await copyFixtureFiles('brocfile-tests/multiple-sass-files');
-
-      let packageJsonPath = path.join(appRoot, 'package.json');
-      let packageJson = fs.readJsonSync(packageJsonPath);
-      packageJson.devDependencies['ember-cli-sass'] = 'latest';
-      fs.writeJsonSync(packageJsonPath, packageJson);
-
-      await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
-
-      expect(file('dist/assets/main.css')).to.equal(
-        'body { background: black; }\n',
-        'main.css contains correct content'
-      );
-
-      expect(file('dist/assets/theme/a.css')).to.equal(
-        '.theme { color: red; }\n',
-        'theme/a.css contains correct content'
-      );
-    });
-  }
-
   it('app.css is output to <app name>.css by default', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build');
     expect(file(`dist/assets/${appName}.css`)).to.exist;
   });
 
   // for backwards compat.
   it('app.scss is output to <app name>.css by default', async function () {
+    if (isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
     await copyFixtureFiles('brocfile-tests/multiple-sass-files');
 
     let brocfilePath = path.join(appRoot, 'ember-cli-build.js');
     let brocfile = fs.readFileSync(brocfilePath, 'utf8');
-
-    // remove custom preprocessCss paths, use app.scss instead
-    brocfile = brocfile.replace(/outputPaths.*/, '');
 
     fs.writeFileSync(brocfilePath, brocfile, 'utf8');
 

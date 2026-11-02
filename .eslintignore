@@ -1,9 +1,12 @@
 /bin/
 /blueprints/**/files/
+/packages/*-blueprint/files/
 /common-tmp/
 /coverage/
-/tests/fixtures/
+/docs/build/
+/node_modules/
 /tmp/
+tests/fixtures/
 
 /lib/broccoli/app-*.js
 /lib/broccoli/test-support-*.js
@@ -11,4 +14,4 @@
 /lib/broccoli/vendor-*.js
 
 !.*
-/node_modules/
+/.git/

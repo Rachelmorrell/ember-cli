@@ -1,26 +1,29 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const EOL = require('os').EOL;
 const MockUI = require('console-ui/mock');
-const MockAnalytics = require('../../helpers/mock-analytics');
 const MockServerWatcher = require('../../helpers/mock-watcher');
 const ServerWatcher = require('../../../lib/models/server-watcher');
 
 describe('Server Watcher', function () {
   let ui;
-  let analytics;
   let watcher;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     ui = new MockUI();
-    analytics = new MockAnalytics();
     watcher = new MockServerWatcher();
 
-    new ServerWatcher({
+    class ServerWatcherMock extends ServerWatcher {
+      setupBroccoliWatcher() {
+        this.watcher = watcher;
+
+        return super.setupBroccoliWatcher(...arguments);
+      }
+    }
+
+    await ServerWatcherMock.build({
       ui,
-      analytics,
-      watcher,
     });
   });
 
@@ -32,10 +35,6 @@ describe('Server Watcher', function () {
     it('logs that the file was changed', function () {
       expect(ui.output).to.equal(`File changed: "foo.txt"${EOL}`);
     });
-
-    it('does NOT tracks changes', function () {
-      expect(analytics.tracks).to.deep.equal([]);
-    });
   });
 
   describe('watcher:add', function () {
@@ -46,10 +45,6 @@ describe('Server Watcher', function () {
     it('logs that the file was added', function () {
       expect(ui.output).to.equal(`File added: "foo.txt"${EOL}`);
     });
-
-    it('does NOT track additions', function () {
-      expect(analytics.tracks).to.deep.equal([]);
-    });
   });
 
   describe('watcher:delete', function () {
@@ -59,10 +54,6 @@ describe('Server Watcher', function () {
 
     it('logs that the file was deleted', function () {
       expect(ui.output).to.equal(`File deleted: "foo.txt"${EOL}`);
-    });
-
-    it('does NOT tracks deletions', function () {
-      expect(analytics.tracks).to.deep.equal([]);
     });
   });
 });

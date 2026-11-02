@@ -1,0 +1,6 @@
+Requested ember-cli commands:
+
+ember foo <speed> <options...>
+  Initializes the warp drive.
+  --dry-run (Boolean) (Default: false)
+    aliases: -d

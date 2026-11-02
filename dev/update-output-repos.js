@@ -1,112 +1,56 @@
 'use strict';
 
+const assert = require('assert');
 const fs = require('fs-extra');
-const path = require('path');
-const execa = require('execa');
+const { execa } = require('execa');
 const tmp = require('tmp');
+const { default: latestVersion } = require('latest-version');
+const { cloneBranch, clearRepo, generateOutputFiles } = require('./output-repo-helpers');
 tmp.setGracefulCleanup();
 
-const currentVersion = require('../package').version;
-const EMBER_PATH = require.resolve('../bin/ember');
-const isStable = !currentVersion.includes('-beta');
-const ONLINE_EDITOR_FILES = path.join(__dirname, 'online-editors');
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const BLUEPRINT = process.env.BLUEPRINT;
+const APP_REPO = 'ember-cli/ember-new-output';
+const ADDON_REPO = 'ember-cli/ember-addon-output';
+const [, , tag] = process.argv;
 
-let tmpdir = tmp.dirSync();
+assert(GITHUB_TOKEN, 'GITHUB_TOKEN must be set');
+assert(tag, 'a tag must be provided as the first argument to this script.');
+assert(BLUEPRINT === 'app' || BLUEPRINT === 'addon', 'BLUEPRINT must be set to either `app` or `addon`');
 
-async function updateOnlineEditorRepos() {
-  if (!isStable) {
-    return;
+async function updateRepo(tag) {
+  let repoName = APP_REPO;
+  let command = 'new';
+  let name = 'my-app';
+
+  if (BLUEPRINT === 'addon') {
+    repoName = ADDON_REPO;
+    command = 'addon';
+    name = 'my-addon';
   }
 
-  let repo = 'git@github.com:ember-cli/editor-output.git';
-  let onlineEditors = ['stackblitz'];
+  let version = tag.replace(/^v/, '').replace(/-ember-cli$/, '');
+  let latestEC = await latestVersion('ember-cli');
+  let latestECBeta = await latestVersion('ember-cli', { version: 'beta' });
 
-  for (let command of ['new', 'addon']) {
-    let tmpdir = tmp.dirSync();
-    await fs.mkdirp(tmpdir.name);
+  let isLatest = version === latestEC;
+  let isLatestBeta = version === latestECBeta;
 
-    let name = command === 'new' ? 'my-app' : 'my-addon';
-    let projectType = command === 'new' ? 'app' : 'addon';
-
-    let updatedOutputTmpDir = tmp.dirSync();
-    console.log(`Running ember ${command} ${name}`);
-    await execa(EMBER_PATH, [command, name, `--skip-bower`, `--skip-npm`, `--skip-git`], {
-      cwd: updatedOutputTmpDir.name,
-    });
-
-    let generatedOutputPath = path.join(updatedOutputTmpDir.name, name);
-
-    for (let onlineEditor of onlineEditors) {
-      let editorBranch = `${onlineEditor}-${projectType}-output`;
-      let outputRepoPath = path.join(tmpdir.name, 'editor-output');
-
-      console.log(`cloning ${repo} in to ${tmpdir.name}`);
-      try {
-        await execa('git', ['clone', repo, `--branch=${editorBranch}`], {
-          cwd: tmpdir.name,
-        });
-      } catch (e) {
-        // branch may not exist yet
-        await execa('git', ['clone', repo], {
-          cwd: tmpdir.name,
-        });
-      }
-
-      console.log('preparing updates for online editors');
-      await execa('git', ['switch', '-C', editorBranch], { cwd: outputRepoPath });
-
-      console.log(`clearing ${repo} in ${outputRepoPath}`);
-      await execa(`git`, [`rm`, `-rf`, `.`], {
-        cwd: outputRepoPath,
-      });
-
-      console.log('copying generated contents to output repo');
-      await fs.copy(generatedOutputPath, outputRepoPath);
-
-      console.log('copying online editor files');
-      await fs.copy(path.join(ONLINE_EDITOR_FILES, onlineEditor), outputRepoPath);
-
-      console.log('commiting updates');
-      await execa('git', ['add', '--all'], { cwd: outputRepoPath });
-      await execa('git', ['commit', '-m', currentVersion], { cwd: outputRepoPath });
-
-      console.log('pushing commit');
-      try {
-        await execa('git', ['push', '--force', 'origin', editorBranch], { cwd: outputRepoPath });
-      } catch (e) {
-        // branch may not exist yet
-        await execa('git', ['push', '-u', 'origin', editorBranch], { cwd: outputRepoPath });
-      }
-    }
-  }
-}
-
-async function updateRepo(repoName) {
-  let command = repoName === 'ember-new-output' ? 'new' : 'addon';
-  let name = repoName === 'ember-new-output' ? 'my-app' : 'my-addon';
-  let outputRepoPath = path.join(tmpdir.name, repoName);
+  let isStable = !tag.includes('-beta');
 
   let outputRepoBranch = isStable ? 'stable' : 'master';
-  let shouldUpdateMasterFromStable = currentVersion.endsWith('-beta.1');
+  let shouldUpdateMasterFromStable = tag.endsWith('-beta.1');
   let branchToClone = shouldUpdateMasterFromStable ? 'stable' : outputRepoBranch;
+  let tmpdir = tmp.dirSync();
 
-  console.log(`cloning ${repoName}`);
-  await execa('git', ['clone', `git@github.com:ember-cli/${repoName}.git`, `--branch=${branchToClone}`], {
-    cwd: tmpdir.name,
+  let outputRepoPath = await cloneBranch(tmpdir.name, {
+    repo: `https://github-actions:${GITHUB_TOKEN}@github.com/${repoName}.git`,
+    branch: branchToClone,
   });
 
-  console.log(`clearing ${repoName}`);
-  await execa(`git`, [`rm`, `-rf`, `.`], {
-    cwd: path.join(tmpdir.name, repoName),
-  });
+  await clearRepo(outputRepoPath);
 
-  let updatedOutputTmpDir = tmp.dirSync();
-  console.log(`Running ember ${command} ${name}`);
-  await execa(EMBER_PATH, [command, name, `--skip-bower`, `--skip-npm`, `--skip-git`], {
-    cwd: updatedOutputTmpDir.name,
-  });
-
-  let generatedOutputPath = path.join(updatedOutputTmpDir.name, name);
+  let generatedOutputPath = await generateOutputFiles({ version, name, command, variant: 'javascript' });
 
   console.log('copying generated contents to output repo');
   await fs.copy(generatedOutputPath, outputRepoPath);
@@ -117,22 +61,16 @@ async function updateRepo(repoName) {
 
   console.log('commiting updates');
   await execa('git', ['add', '--all'], { cwd: outputRepoPath });
-  await execa('git', ['commit', '-m', currentVersion], { cwd: outputRepoPath });
-  await execa('git', ['tag', `v${currentVersion}`], { cwd: outputRepoPath });
+  await execa('git', ['commit', '-m', tag], { cwd: outputRepoPath });
+  await execa('git', ['tag', `-f`, `v${version}`], { cwd: outputRepoPath });
 
   console.log('pushing commit & tag');
-  await execa('git', ['push', 'origin', `v${currentVersion}`], { cwd: outputRepoPath });
-  await execa('git', ['push', '--force', 'origin', outputRepoBranch], { cwd: outputRepoPath });
-}
+  await execa('git', ['push', 'origin', `v${version}`, '--force'], { cwd: outputRepoPath });
 
-async function main() {
-  try {
-    await updateRepo('ember-new-output');
-    await updateRepo('ember-addon-output');
-    await updateOnlineEditorRepos();
-  } catch (error) {
-    console.log(error);
+  // Only push this branch if we are using an up-to-date tag
+  if ((isStable && isLatest) || (!isStable && isLatestBeta)) {
+    await execa('git', ['push', '--force', 'origin', outputRepoBranch], { cwd: outputRepoPath });
   }
 }
 
-main();
+updateRepo(tag);

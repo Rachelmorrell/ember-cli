@@ -1,15 +1,27 @@
 'use strict';
 
 const broccoliTestHelper = require('broccoli-test-helper');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 
 const EmberApp = require('../../../../lib/broccoli/ember-app');
 const MockCLI = require('../../../helpers/mock-cli');
 const Project = require('../../../../lib/models/project');
 
-const buildOutput = broccoliTestHelper.buildOutput;
+const createBuilder = broccoliTestHelper.createBuilder;
 const createTempDir = broccoliTestHelper.createTempDir;
 const walkSync = require('walk-sync');
+
+const EMBER_SOURCE_ADDON = {
+  name: 'ember-source',
+  paths: {
+    debug: 'vendor/ember/ember.js',
+    prod: 'vendor/ember/ember.js',
+    testing: 'vendor/ember/ember-testing.js',
+  },
+  pkg: {
+    name: 'ember-source',
+  },
+};
 
 describe('EmberApp#appAndDependencies', function () {
   let input, output;
@@ -69,7 +81,17 @@ describe('EmberApp#appAndDependencies', function () {
     };
 
     let cli = new MockCLI();
-    let project = new Project(input.path(), pkg, cli.ui, cli);
+    let project = new (class extends Project {
+      initializeAddons() {
+        if (this._addonsInitialized) {
+          return;
+        }
+
+        super.initializeAddons();
+
+        this.addons.push(EMBER_SOURCE_ADDON);
+      }
+    })(input.path(), pkg, cli.ui, cli);
 
     return new EmberApp(
       {
@@ -127,7 +149,8 @@ describe('EmberApp#appAndDependencies', function () {
       });
     };
 
-    output = await buildOutput(app.getExternalTree());
+    output = createBuilder(app.getExternalTree());
+    await output.build();
     let actualFiles = getFiles(output.path());
 
     expect(actualFiles).to.contain('addon-tree-output/modules/my-addon/index.js');

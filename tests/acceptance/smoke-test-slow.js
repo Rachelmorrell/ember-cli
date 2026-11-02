@@ -5,48 +5,52 @@ const fs = require('fs-extra');
 const crypto = require('crypto');
 const walkSync = require('walk-sync');
 const EOL = require('os').EOL;
-const execa = require('execa');
+const { execa } = require('execa');
 
-const acceptance = require('../helpers/acceptance');
+const { createAndInstallTestTargets } = require('../helpers/acceptance');
 const copyFixtureFiles = require('../helpers/copy-fixture-files');
 const killCliProcess = require('../helpers/kill-cli-process');
 const ember = require('../helpers/ember');
 const runCommand = require('../helpers/run-command');
-const { isExperimentEnabled } = require('../../lib/experiments');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
 const DistChecker = require('../helpers/dist-checker');
-let createTestTargets = acceptance.createTestTargets;
-let teardownTestTargets = acceptance.teardownTestTargets;
-let linkDependencies = acceptance.linkDependencies;
-let cleanupRun = acceptance.cleanupRun;
 
-const chai = require('../chai');
-let expect = chai.expect;
-let file = chai.file;
-let dir = chai.dir;
+const { expect } = require('chai');
+const { dir, file } = require('chai-files');
+
+let root = path.resolve(__dirname, '..', '..');
 
 let appName = 'some-cool-app';
 let appRoot;
+let testSetup;
+
+// this mimics the vitest it.skipIf API so we can easily swap to it when we swap to vitest
+function skipIf(condition) {
+  if (condition) {
+    return it.skip;
+  } else {
+    return it;
+  }
+}
 
 describe('Acceptance: smoke-test', function () {
   this.timeout(500000);
-  before(function () {
-    return createTestTargets(appName);
+
+  beforeEach(async function () {
+    testSetup = await createAndInstallTestTargets(appName);
+    appRoot = testSetup.path;
+    process.chdir(appRoot);
   });
 
-  after(teardownTestTargets);
-
-  beforeEach(function () {
-    appRoot = linkDependencies(appName);
-  });
-
-  afterEach(function () {
+  afterEach(async function () {
     delete process.env._TESTEM_CONFIG_JS_RAN;
     runCommand.killAll();
-    cleanupRun(appName);
+    process.chdir(root);
+    await testSetup.cleanup();
     expect(dir(appRoot)).to.not.exist;
   });
 
-  it('ember new foo, clean from scratch', function () {
+  skipIf(isExperimentEnabled('VITE'))('ember new foo, clean from scratch', function () {
     return runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test');
   });
 
@@ -88,19 +92,6 @@ describe('Acceptance: smoke-test', function () {
     expect(output).to.include('***CUSTOM_TESTEM_JS**');
   });
 
-  it('eslint passes after running ember new', async function () {
-    let result = await runCommand(path.join('.', 'node_modules', 'eslint', 'bin', 'eslint.js'), appRoot);
-
-    let exitCode = result.code;
-
-    expect(exitCode).to.equal(0, 'exit code should be 0 for passing tests');
-    expect(result.output).to.be.empty;
-  });
-
-  // there is a bug in here when running the entire suite on Travis
-  // when run in isolation, it passes
-  // here is the error:
-  // test-support-80f2fe63fae0c44478fe0f8af73200a7.js contains the fingerprint (2871106928f813936fdd64f4d16005ac): expected 'test-support-80f2fe63fae0c44478fe0f8af73200a7.js' to include '2871106928f813936fdd64f4d16005ac'
   if (!isExperimentEnabled('EMBROIDER')) {
     it.skip('ember new foo, build production and verify fingerprint', async function () {
       await runCommand(
@@ -136,7 +127,7 @@ describe('Acceptance: smoke-test', function () {
     });
   }
 
-  it('ember test --environment=production', async function () {
+  skipIf(isExperimentEnabled('VITE'))('ember test --environment=production', async function () {
     await copyFixtureFiles('smoke-tests/passing-test');
 
     let result = await runCommand(
@@ -153,7 +144,7 @@ describe('Acceptance: smoke-test', function () {
     expect(output).to.match(/pass\s+\d+/, 'many passing');
   });
 
-  it('ember test --path with previous build', async function () {
+  skipIf(isExperimentEnabled('VITE'))('ember test --path with previous build', async function () {
     let originalWrite = process.stdout.write;
     let output = [];
 
@@ -184,7 +175,7 @@ describe('Acceptance: smoke-test', function () {
     expect(output).to.match(/pass\s+\d+/, 'many passing');
   });
 
-  it('ember test wasm', async function () {
+  skipIf(isExperimentEnabled('VITE'))('ember test wasm', async function () {
     let originalWrite = process.stdout.write;
     let output = [];
 
@@ -267,76 +258,82 @@ describe('Acceptance: smoke-test', function () {
     });
   });
 
-  it('ember new foo, build --watch development, and verify rebuilt after change', async function () {
-    let touched = false;
-    let appJsPath = path.join(appRoot, 'app', 'app.js');
-    let text = 'anotuhaonteuhanothunaothanoteh';
-    let line = `console.log("${text}");`;
+  skipIf(isExperimentEnabled('VITE'))(
+    'ember new foo, build --watch development, and verify rebuilt after change',
+    async function () {
+      let touched = false;
+      let appJsPath = path.join(appRoot, 'app', 'app.js');
+      let text = 'anotuhaonteuhanothunaothanoteh';
+      let line = `console.log("${text}");`;
 
-    let checker = new DistChecker(path.join(appRoot, 'dist'));
+      let checker = new DistChecker(path.join(appRoot, 'dist'));
 
-    try {
-      await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build', '--watch', {
-        onOutput(string, child) {
-          if (touched) {
-            if (string.match(/Build successful/)) {
-              expect(checker.contains('js', text)).to.be;
-              killCliProcess(child);
-            }
-          } else if (string.match(/Build successful/)) {
-            // first build
-            touched = true;
-            fs.appendFileSync(appJsPath, line);
-          }
-        },
-      });
-    } catch (error) {
-      // swallowing because of SIGINT
-    }
-  });
-
-  it('ember new foo, build --watch development, and verify rebuilt after multiple changes', async function () {
-    let buildCount = 0;
-    let touched = false;
-    let appJsPath = path.join(appRoot, 'app', 'app.js');
-    let firstText = 'anotuhaonteuhanothunaothanoteh';
-    let firstLine = `console.log("${firstText}");`;
-    let secondText = 'aahsldfjlwioruoiiononociwewqwr';
-    let secondLine = `console.log("${secondText}");`;
-
-    let checker = new DistChecker(path.join(appRoot, 'dist'));
-
-    try {
-      await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build', '--watch', {
-        onOutput(string, child) {
-          if (buildCount === 0) {
-            if (string.match(/Build successful/)) {
+      try {
+        await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build', '--watch', {
+          onOutput(string, child) {
+            if (touched) {
+              if (string.match(/Build successful/)) {
+                expect(checker.contains('js', text)).to.be;
+                killCliProcess(child);
+              }
+            } else if (string.match(/Build successful/)) {
               // first build
               touched = true;
-              buildCount = 1;
-              fs.appendFileSync(appJsPath, firstLine);
+              fs.appendFileSync(appJsPath, line);
             }
-          } else if (buildCount === 1) {
-            if (string.match(/Build successful/)) {
-              // second build
-              touched = true;
-              buildCount = 2;
-              fs.appendFileSync(appJsPath, secondLine);
-            }
-          } else if (touched && buildCount === 2) {
-            if (string.match(/Build successful/)) {
-              expect(checker.contains('js', secondText)).to.be;
-              killCliProcess(child);
-            }
-          }
-        },
-      });
-    } catch (error) {
-      // swallowing because of SIGINT
+          },
+        });
+      } catch (error) {
+        // swallowing because of SIGINT
+      }
     }
-  });
+  );
 
-  it('build failures should be logged correctly', async function () {
+  skipIf(isExperimentEnabled('VITE'))(
+    'ember new foo, build --watch development, and verify rebuilt after multiple changes',
+    async function () {
+      let buildCount = 0;
+      let touched = false;
+      let appJsPath = path.join(appRoot, 'app', 'app.js');
+      let firstText = 'anotuhaonteuhanothunaothanoteh';
+      let firstLine = `console.log("${firstText}");`;
+      let secondText = 'aahsldfjlwioruoiiononociwewqwr';
+      let secondLine = `console.log("${secondText}");`;
+
+      let checker = new DistChecker(path.join(appRoot, 'dist'));
+
+      try {
+        await runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'build', '--watch', {
+          onOutput(string, child) {
+            if (buildCount === 0) {
+              if (string.match(/Build successful/)) {
+                // first build
+                touched = true;
+                buildCount = 1;
+                fs.appendFileSync(appJsPath, firstLine);
+              }
+            } else if (buildCount === 1) {
+              if (string.match(/Build successful/)) {
+                // second build
+                touched = true;
+                buildCount = 2;
+                fs.appendFileSync(appJsPath, secondLine);
+              }
+            } else if (touched && buildCount === 2) {
+              if (string.match(/Build successful/)) {
+                expect(checker.contains('js', secondText)).to.be;
+                killCliProcess(child);
+              }
+            }
+          },
+        });
+      } catch (error) {
+        // swallowing because of SIGINT
+      }
+    }
+  );
+
+  skipIf(isExperimentEnabled('VITE'))('build failures should be logged correctly', async function () {
     fs.writeFileSync(
       `${process.cwd()}/ember-cli-build.js`,
       `
@@ -375,7 +372,7 @@ module.exports = function() {
     );
   });
 
-  it('ember new foo, server, SIGINT clears tmp/', async function () {
+  skipIf(isExperimentEnabled('VITE'))('ember new foo, server, SIGINT clears tmp/', async function () {
     let result = await runCommand(
       path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'),
       'server',
@@ -403,30 +400,33 @@ module.exports = function() {
     }
   });
 
-  it('ember new foo, test, SIGINT exits with error and clears tmp/', async function () {
-    let result = await expect(
-      runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test', '--test-port=25522', {
-        onOutput(string, child) {
-          // wait for the first passed test and then exit
-          if (string.match(/^ok /)) {
-            killCliProcess(child);
-          }
-        },
-      })
-    ).to.be.rejected;
+  skipIf(isExperimentEnabled('VITE'))(
+    'ember new foo, test, SIGINT exits with error and clears tmp/',
+    async function () {
+      let result = await expect(
+        runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test', '--test-port=25522', {
+          onOutput(string, child) {
+            // wait for the first passed test and then exit
+            if (string.match(/^ok /)) {
+              killCliProcess(child);
+            }
+          },
+        })
+      ).to.be.rejected;
 
-    expect(result.code, 'should be error exit code').to.not.equal(0);
+      expect(result.code, 'should be error exit code').to.not.equal(0);
 
-    let dirPath = path.join(appRoot, 'tmp');
+      let dirPath = path.join(appRoot, 'tmp');
 
-    // before broccoli2, various addons used tmp/ in the project.
-    // With broccoli2 that should not exist, they should be using os.tmpdir().
-    // So we'll just check for "if tmp/ is there, are the contents correct?"
-    if (fs.existsSync(dirPath)) {
-      let dir = fs.readdirSync(dirPath).filter((file) => file !== '.metadata_never_index');
-      expect(dir.length, `${dirPath} should be empty`).to.equal(0);
+      // before broccoli2, various addons used tmp/ in the project.
+      // With broccoli2 that should not exist, they should be using os.tmpdir().
+      // So we'll just check for "if tmp/ is there, are the contents correct?"
+      if (fs.existsSync(dirPath)) {
+        let dir = fs.readdirSync(dirPath).filter((file) => file !== '.metadata_never_index');
+        expect(dir.length, `${dirPath} should be empty`).to.equal(0);
+      }
     }
-  });
+  );
 
   it('ember new foo, build production and verify css files are concatenated', async function () {
     await copyFixtureFiles('with-styles');
@@ -472,23 +472,26 @@ module.exports = function() {
     expect(file(filePath)).to.contain('generated component successfully');
   });
 
-  it('template linting works properly for pods and classic structured templates', async function () {
-    await copyFixtureFiles('smoke-tests/with-template-failing-linting');
+  skipIf(isExperimentEnabled('VITE'))(
+    'template linting works properly for pods and classic structured templates',
+    async function () {
+      await copyFixtureFiles('smoke-tests/with-template-failing-linting');
 
-    let packageJsonPath = 'package.json';
-    let packageJson = fs.readJsonSync(packageJsonPath);
-    packageJson.devDependencies = packageJson.devDependencies || {};
-    packageJson.devDependencies['fake-template-linter'] = 'latest';
-    fs.writeJsonSync(packageJsonPath, packageJson);
+      let packageJsonPath = 'package.json';
+      let packageJson = fs.readJsonSync(packageJsonPath);
+      packageJson.devDependencies = packageJson.devDependencies || {};
+      packageJson.devDependencies['fake-template-linter'] = 'latest';
+      fs.writeJsonSync(packageJsonPath, packageJson);
 
-    let result = await expect(runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test')).to.be
-      .rejected;
+      let result = await expect(runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test')).to.be
+        .rejected;
 
-    let output = result.output.join(EOL);
-    expect(output).to.match(/TemplateLint:/, 'ran template linter');
-    expect(output).to.match(/fail\s+2/, 'two templates failed linting');
-    expect(result.code).to.equal(1);
-  });
+      let output = result.output.join(EOL);
+      expect(output).to.match(/TemplateLint:/, 'ran template linter');
+      expect(output).to.match(/fail\s+2/, 'two templates failed linting');
+      expect(result.code).to.equal(1);
+    }
+  );
 
   describe('lint fixing after file generation', function () {
     beforeEach(async function () {
@@ -508,7 +511,7 @@ module.exports = function() {
       ).to.eventually.be.rejectedWith(`${componentName}.hbs`);
     });
 
-    it('does fix lint errors with --lint-fix', async function () {
+    skipIf(isExperimentEnabled('VITE'))('does fix lint errors with --lint-fix', async function () {
       await ember(['generate', 'component', componentName, '--component-class=@ember/component', '--lint-fix']);
 
       await expect(execa('eslint', ['.'], { cwd: appRoot, preferLocal: true })).to.eventually.be.ok;

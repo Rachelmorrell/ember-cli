@@ -3,7 +3,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const broccoliTestHelper = require('broccoli-test-helper');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const BroccoliPlugin = require('broccoli-plugin');
 const walkSync = require('walk-sync');
 
@@ -12,8 +12,20 @@ const Project = require('../../../lib/models/project');
 const Addon = require('../../../lib/models/addon');
 const EmberApp = require('../../../lib/broccoli/ember-app');
 
-const buildOutput = broccoliTestHelper.buildOutput;
+const createBuilder = broccoliTestHelper.createBuilder;
 const createTempDir = broccoliTestHelper.createTempDir;
+
+const EMBER_SOURCE_ADDON = {
+  name: 'ember-source',
+  paths: {
+    debug: 'vendor/ember/ember.js',
+    prod: 'vendor/ember/ember.js',
+    testing: 'vendor/ember/ember-testing.js',
+  },
+  pkg: {
+    name: 'ember-source',
+  },
+};
 
 describe('template preprocessors', function () {
   let input, output, addon;
@@ -105,7 +117,8 @@ describe('template preprocessors', function () {
         },
       });
 
-      output = await buildOutput(addon.treeForAddon(path.join(addon.root, '/addon')));
+      output = createBuilder(addon.treeForAddon(path.join(addon.root, '/addon')));
+      await output.build();
 
       expect(output.read()).to.deep.equal({
         'fake-addon': {
@@ -124,7 +137,17 @@ describe('template preprocessors', function () {
       input = await createTempDir();
       let cli = new MockCLI();
       let pkg = { name: 'fake-app-test', devDependencies: { 'ember-cli': '*' } };
-      project = new Project(input.path(), pkg, cli.ui, cli);
+      project = new (class extends Project {
+        initializeAddons() {
+          if (this._addonsInitialized) {
+            return;
+          }
+
+          super.initializeAddons();
+
+          this.addons.push(EMBER_SOURCE_ADDON);
+        }
+      })(input.path(), pkg, cli.ui, cli);
     });
 
     afterEach(async function () {
@@ -179,7 +202,8 @@ describe('template preprocessors', function () {
         },
       });
 
-      output = await buildOutput(app.toTree());
+      output = createBuilder(app.toTree());
+      await output.build();
 
       let expectedContent = `export default class {}\nexport const template = hbs\`<!-- flerpy -->\``;
       let actualContent = output.read().assets['fake-app-test.js'];

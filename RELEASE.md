@@ -1,175 +1,236 @@
 # Release Process
 
-ember-cli follows the same channel based release process that Ember does:
+`ember-cli` follows the same channel based release process that Ember does:
 
-* `release` - This branch represents the `latest` dist-tag on NPM
-* `beta` - This branch represents the `beta` dist-tag on NPM
-* `master` - The branch is not released to the NPM registry, but (generally speaking) can be used directly
+- `release` - This branch represents the `latest` dist-tag on NPM
+- `beta` - This branch represents the `beta` dist-tag on NPM
+- `master` - The branch represents the `alpha` dist-tag on NPM
 
-## Initial Stable Release
+Most changes should be made as a PR that targets the `master` branch and then makes their way through `beta` and `release` over the course of 12 weeks as part of the Ember release train. Generally speaking we do not backport functional changes to `beta` or `release` but we can if needs be.
 
-* Update blueprint dependencies to latest
+This release process is managed by [release-plan](https://github.com/embroider-build/release-plan) which means that all changes should be made as a pull request to make sure it is captured in the changelog.
+
+## Release process overview
+
+During the release week each of the versions are effectively "promoted" i.e. the current `beta` version is released as `latest`, the current `alpha` version is released as `beta` and a **new** `alpha` version is created. This requires PRs to each of the active branches to update ember-source (and potentially ember-data) versions. Each of those PRs that update dependencies should be marked as `enhancement` if we are releasing a minor version.
+
+The release process during release week should look like this:
+
+- Make sure that `@ember/app-blueprint` is released before starting any of these steps
+- Merge any outstanding `Prepare Alpha Release` branches
+- Do an intial stable release from the `release` branch
+- Merge `release` into `beta`
+- Do a `beta` release
+- Merge `beta` into `master`
+- Do an `alpha` release
+
+### Merge any outstanding `Prepare Alpha Release` branches
+
+This makes sure that you are starting from a "clean slate" before doing any other releases. This will make each of the following steps easier to follow.
+
+You can use [this saved search](https://github.com/ember-cli/ember-cli/pulls?q=is%3Apr+is%3Aopen+Prepare) to find any outstanding `Prepare Release` branches.
+
+### Initial Stable Release from the `release` branch
+
+- fetch latest from origin `git fetch`
+- create a new branch to do the release e.g. `git checkout --no-track -b release-plan-6-4 origin/release`
+  - note: branches named like `release-6-4` are used to manage LTS patch releases so we don't want to create a branch with that name at this time
+- Merge `origin/beta` into the release branch
+  - `git merge origin/beta --no-ff`
+  - **make sure to not update the .release-plan file** this should only ever be changed by the release-plan github scripts
+  - **make sure to not update the .github/workflows/plan-stable-release.yml file** this should still plan a stable release
+  - **make sure to not update the .github/workflows/publish-stable.yml file** this should still publish a stable release
+  - **make sure to not update the CHANGELOG.md file** so as not to include the beta or alpha changelogs in the next release
+  - make sure to not update the version in the `package.json`, `packages/app-blueprint/package.json`, or `packages/addon-blueprint/package.json` files during this step, this will be release-plan's job
+  - make sure to not update update the `ember-cli` reference in `packages/app-blueprint/files/package.json`, this has been automated in the release-plan process
+  - make sure to not add the `release-plan` config section to the `package.json`, `packages/app-blueprint/package.json`, or `packages/addon-blueprint/package.json` files during this step. We are releasing a real release so we don't want to configure release-plan to do a pre-release.
+  - commit the merge `git commit -am "promote beta to release"`
+- Update blueprint dependencies to latest.
+
+  ```
+  pnpm dlx update-blueprint-deps --filter 'ember-source$' --tag latest ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/**/package.json
+  pnpm dlx update-blueprint-deps --filter '@ember-tooling/.*' --tag latest ./package.json ./packages/*-blueprint/**/*ackage.json
+  pnpm dlx update-blueprint-deps --filter '.*' ./package.json ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/*/package.json ./tests/fixtures/*/*/package.json
+  ```
+
+- run `pnpm install` to update your pacakge.lock and download any new dependencies
+- run `pnpm lint:fix`
+- update the @ember/app-blueprint dependency `pnpm i -w @ember/app-blueprint@latest`
+- manually add a `~` back into the `@ember/app-blueprint` dependency in the root package.json
+- run `pnpm install` to make sure the lock file is up to date
+- commit this update `git commit -am "update blueprint dependencies to latest"`
+- push and open a PR targeting `release` with a PR title like `Promote Beta and update all dependencies for 6.4 release`
+- mark this PR as an `enhancement` if it is a minor release, or `breaking` if it is a major
+- check that everything is ok (i.e. that CI has run correctly and that you have the changes you expect)
+- merge branch
+- check that the `Prepare Release` PR has been correctly opened by `release-plan`
+- Merge the `Prepare Release` branch when you are ready to release
+- Check the `Release Stable` GitHub action to make sure the release succeeded
+- Check the [Sync Output Repos](https://github.com/ember-cli/ember-cli/actions/workflows/sync-output-repos.yml) Github action to ensure the output repos have generated from the tag.
+
+### Finish the `@ember/app-blueprint` release
+
+- Update the `@ember/app-blueprint` `release` branch to use this new version of ember-cli
+- continue the rest of the [@ember/app-blueprint release process](https://github.com/ember-cli/ember-app-blueprint/blob/main/RELEASE.md#release-ember-cli-and-update-that-dependency) until beta and alpha are released
+
+### Beta release from the `beta` branch
+
+- fetch latest from origin `git fetch`
+- create a new branch to merge `release` into `beta` e.g. `git checkout --no-track -b merge-release origin/beta`
+- merge release into this new branch e.g. `git merge origin/release --no-ff`
+  - **make sure to not update the .release-plan file** this should only ever be changed by the release-plan github scripts
+  - **make sure to not update any .github/workflows/plan-beta-release.yml file** this should still plan a beta release
+  - **make sure to not update any .github/workflows/publish-beta.yml file** this should still publish a beta release
+  - make sure to not update the version in the `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json` during this step, that step comes later
+  - make sure to not remove the `release-plan` config section to the `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json`, during this step.
+  - commit the merge `git commit -am "merge release into beta"`
+- merge master into this new branch too e.g. `git merge origin/master --no-ff`
+  - **make sure to not update the .release-plan file** this should only ever be changed by the release-plan github scripts
+  - **make sure to not update the CHANGELOG.md file** in this step. It should match the changelog on `origin/release` at this stage.
+  - make sure not to update the `release-plan` config in `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json`
+  - make sure not to update the `@ember-tooling/blueprint-blueprint` versions (i.e. not workspace dependencies) in `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json`
+  - make sure not to add any files from `packages/blueprint-blueprint` or `packages/blueprint-model` in this merge (those files only exist on main)
+  - commit the merge `git commit -am "merge master into beta"`
+- update the versions in package.jsons
+  - update the alpha version in package.json to be a beta i.e. if the incoming merge is `"version": "6.6.0-alpha.3",` update it to `"version": "6.6.0-beta.0",`
+  - update the alpha version in `packages/addon-blueprint/package.json` to be the same beta version
+  - update the alpha version in `packages/app-blueprint/package.json` to be the same beta version
+  - update the `ember-cli` reference in `packages/app-blueprint/files/package.json` to be the same as the version you just put in the top level package.json
+  - commit the version changes `git commit -am "update versions"`
+- Update blueprint dependencies to beta
+
+  ```
+  pnpm dlx update-blueprint-deps --filter 'ember-source$' --tag beta ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/**/package.json
+  pnpm dlx update-blueprint-deps --filter '@ember-tooling/.*' --tag latest ./package.json ./packages/*-blueprint/**/*ackage.json
+  pnpm dlx update-blueprint-deps --filter '.*' ./package.json ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/*/package.json ./tests/fixtures/*/*/package.json
+  ```
+
+- run `pnpm lint:fix`
+- update the @ember/app-blueprint dependency `pnpm i -w @ember/app-blueprint@beta`
+- manually add a `~` back into the `@ember/app-blueprint` dependency in the root package.json
+- run `pnpm install` to make sure the lock file is up to date
+- commit this update `git commit -am "update blueprint dependencies to beta"`
+- push and open a PR targeting `beta` with a PR title like `Prepare 6.5-beta`
+- mark this PR as an `enchancement` if the next beta is a minor release
+- check that everything is ok i.e. CI passes
+- merge the `merge-release` branch into `beta` in GitHub
+- check that the `Prepare Beta Release` PR has been correctly opened by `release-plan`
+  - note: the release-plan config will automatically make this version a pre-release
+- Merge the `Prepare Beta Release` when you are ready to release the next beta version
+- Check the `Release Beta` GitHub action to make sure the release succeeded
+- Check the [Sync Output Repos](https://github.com/ember-cli/ember-cli/actions/workflows/sync-output-repos.yml) Github action to ensure the output repos have generated from the tag.
+
+### Alpha release from the `master` branch
+
+- fetch latest from origin `git fetch`
+- create a new branch to merge `beta` into `master` e.g. `git checkout --no-track -b merge-beta origin/master`
+- merge beta into this new branch e.g. `git merge origin/beta --no-ff`
+  - **make sure to not update the .release-plan file** this should only ever be changed by the release-plan github scripts
+  - make sure to not update the version in the `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json` during this step, that step comes later
+  - make sure to not update the `release-plan` config section to the `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json`, during this step.
+  - make sure not to update the `@ember-tooling/blueprint-blueprint` or `@ember-tooling/blueprint-model` away from being `workspace: *` dependencies in `package.json`, `packages/addon-blueprint/package.json`, or `packages/app-blueprint/package.json`. On master they always use the latest and don't use semver.
+  - **make sure to not update any .github/workflows/plan-release.yml file** this should still plan a beta release
+  - **make sure to not update any .github/workflows/publish.yml file** this should still publish a beta release
+  - **make sure to not update the CHANGELOG.md file** in this step.
+  - **make sure not to delete any package files** they exist on master but not on either the release or beta branches
+  - commit this merge
+- manually update the version in `package.json` to be the next alpha.
+  - e.g. if the current alpha is `"version": "6.6.0-alpha.3",` update it to be `"version": "6.7.0-alpha.0",`
+- manually update the alpha version in `packages/addon-blueprint/package.json` to be the same alpha
+- manually update the alpha version in `packages/app-blueprint/package.json` to be the same alpha
+- update the `ember-cli` reference in `packages/app-blueprint/files/package.json` to be the same alpha
+- commit this change `git commit -am "update to the next alpha version"`
+- Update blueprint dependencies to alpha
+
+  ```
+  pnpm dlx update-blueprint-deps --filter 'ember-source$' --tag alpha ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/**/package.json
+  pnpm dlx update-blueprint-deps --filter '.*' ./package.json ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/*/package.json ./tests/fixtures/*/*/package.json
+  ```
+
+- note: ember-data (aka warp-drive) should only ever be updated on master as a separate PR. It is no longer part of the release process
+- run `pnpm lint:fix`
+- update the @ember/app-blueprint dependency `pnpm i -w @ember/app-blueprint@alpha`
+- make sure the app-blueprint still has a `~` after the above step
+- run `pnpm install` to make sure the lock file is up to date
+- commit this update `git commit -am "update blueprint dependencies to alpha"`
+- push and open a PR targeting `master` with a PR title like `Prepare 6.6-alpha`
+- mark this PR as an `enchancement` if the next alpha is a minor release
+- check that everything is ok i.e. CI passes
+- merge the `merge-beta` branch into `master` in GitHub
+- check that the `Prepare Alpha Release` PR has been correctly opened by `release-plan`
+- Merge the `Prepare Alpha Release` when you are ready to release the next alpha version
+- Check the `Release Alpha` GitHub action to make sure the release succeeded
+- Check the [Sync Output Repos](https://github.com/ember-cli/ember-cli/actions/workflows/sync-output-repos.yml) Github action to ensure the output repos have generated from the tag.
+
+### Update all packages
+
+In the `update-blueprint-deps` steps described above we updated all packages that had in-range updates available. We also need to apply any out-of-range updates as part of the release process.
+
+Once the Alpha release has been completed we should run the following command to see if there are any releases that have out-of-range updates available:
 
 ```
-node ./dev/update-blueprint-dependencies.js --ember-source=latest --ember-data=latest
+pnpm dlx update-blueprint-deps --filter '.*' --tag latest ./package.json ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/*/package.json ./tests/fixtures/*/*/package.json
 ```
 
-* Commit
-* Send pull request to `beta` branch
-* Wait for PR (for updating blueprint dependencies) to be merged
-
-* Checkout the `release` branch
+This is not intended to be committed and opened as a single PR, it is for illustrative purposes only. If your git diff shows that there are any packages that need to have the range updated (i.e. we have a `^` dependency defined but there is a new major release available) then you should run the same command to update that package with a filter on the package name e.g.
 
 ```
-git fetch origin
-git checkout -B release --track origin/release
+pnpm dlx update-blueprint-deps --filter 'babel-remove-types' --tag latest ./package.json ./packages/*-blueprint/**/*ackage.json ./tests/fixtures/*/package.json ./tests/fixtures/*/*/package.json
 ```
 
-* Merge `beta` branch into `release`
+## Changelog updates
 
-```
-git fetch origin
-git merge origin/beta
-git push origin release
-```
+`release-plan` is designed to automatically generate a Changelog that includes the titles of every PR that was merged since the last release. As we would like to make use of this auto-generated Changelog we need to make sure that PRs are named correctly and the Changelog included in the "Prepare Release" PRs are what we were expecting.
 
-* Ensure you have the correct dependencies
+If you want to change the content of the Changelog then you should update the PR titles you want to update and re-run the `Prepare Release` CI job for that branch. If there are PRs that you would prefer to exclude from the changelog (such as the `merge-beta` or `merge-release` PRs) then you can add the `ignore` label to the PR and they will be removed from the changelog.
 
-```
-git clean -fdx
-yarn
-```
+## Patch Releases
 
-* Update the CHANGELOG.md
-  * Run `node ./dev/changelog`
-  * Copy output into `CHANGELOG.md`
-  * Edit to make clearer for consumers (remove non-consumer facing entries, etc)
-  * Ensure blueprint change diff URLs are correct
-  * Merge any prior beta entries together
-  * Update changelog header for current release
-  * Commit
-* Release: `npx release-it`
-* Update GitHub Release with changelog contents
-* Merge `release` into `beta` branch
+Now that we're using release-plan for all releases, patch releases have become super easy! Every time you merge a PR to any branch that is being released with `release-plan` a new `Prepare Release` PR will be created. When you merge this `Prepare Release` branch it will automatically release the new Patch version.
 
-```
-git checkout -B beta --track origin/beta
-git merge origin/release
-git push origin beta
-```
+## Post-release Automation
 
-## Stable Patch Release
+There is a GitHub Actions workflow, https://github.com/ember-cli/ember-cli/actions/workflows/sync-output-repos.yml that pushes various invocations of the blueprint generator to "output repos".
+After release, make sure that all the jobs are "green" / succeeded.
 
-* Checkout the `release` branch
+<details><summary>What to check afterwards</summary>
 
-```
-git fetch origin
-git checkout -B release --track origin/release
-```
+- Apps: https://github.com/ember-cli/ember-app-output
+- Addons: https://github.com/ember-cli/ember-addon-output
 
-* Ensure you have the correct dependencies
+Both of these have a git-tag per release version
 
-```
-git clean -fdx
-yarn
-```
+### Online Editors
 
-* Update the CHANGELOG.md
-  * Run `node ./dev/changelog`
-  * Copy output into `CHANGELOG.md`
-  * Edit to make clearer for consumers (remove non-consumer facing entries, etc)
-  * Ensure blueprint change diff URLs are correct
-  * Update changelog header for current release
-  * Commit
-* Release: `npx release-it`
-* Update GitHub Release with changelog contents
-* Merge `release` into `beta` branch
+Multiple editors could be supported, but right now, we only "customize" for stackblitz.
 
-```
-git checkout -B beta --track origin/beta
-git merge origin/release
-git push origin beta
-```
+https://github.com/ember-cli/editor-output/
 
-## Initial Beta Release
+- [a branch for each scenario + release version](https://github.com/ember-cli/editor-output/branches/active)
+  - `${editorName}-{addon,app}-output{-'typescript'?}{-version}`
+  - and the "latest release" (non beta) will not have a version at the end
+  - This includes [app, addon] X [javascript, typescript]
 
-* Update `ember-source` and `ember-data` to latest beta
+#### StackBlitz
 
-```
-node ./dev/update-blueprint-dependencies.js --ember-source=beta --ember-data=beta
-```
+To make sure StackBlitz runs in their supported browsers (Chrome and FireFox, as of 2023-08-15)
 
-* Commit
-* Send pull request to `master` branch
-* Wait for PR (for updating blueprint dependencies) to be merged
-* Checkout the `beta` branch
+- App + JS: https://stackblitz.com/github/ember-cli/editor-output/tree/stackblitz-app-output
+- App + TS: https://stackblitz.com/github/ember-cli/editor-output/tree/stackblitz-app-output-typescript
+- Addon + JS: https://stackblitz.com/github/ember-cli/editor-output/tree/stackblitz-addon-output
+- Addon + TS: https://stackblitz.com/github/ember-cli/editor-output/tree/stackblitz-addon-output-typescript
 
-```
-git fetch origin
-git checkout -B beta --track origin/beta
-```
+The App + JS, and App + TS are linked from Stackblitz's frontend templates UI: https://stackblitz.com/?starters=frontend
 
-* Merge `master` branch into `beta`
+</details>
 
-```
-git fetch origin
-git merge origin/master
-git push origin beta
-```
+<details><summary>if problems arise</summary>
 
-* Ensure you have the correct dependencies
+Script for updating addon/app repos: https://github.com/ember-cli/ember-cli/blob/master/dev/update-output-repos.js
+Script for updating editors: https://github.com/ember-cli/ember-cli/blob/master/dev/update-editor-output-repos.js
 
-```
-git clean -fdx
-yarn
-```
+Customizations on top of the default blueprint(s) are found here: https://github.com/ember-cli/ember-cli/tree/master/dev/online-editors/stackblitz
+The intent for these customizations is to either be very light, or not needed at all.
+If an online editor breaks with our default blueprint, then it's most likely that _we_ have a bug (or something _very goofy_).
 
-* Update the CHANGELOG.md
-  * Run `node ./dev/changelog`
-  * Copy output into `CHANGELOG.md`
-  * Edit to make clearer for consumers (remove non-consumer facing entries, etc)
-  * Ensure blueprint change diff URLs are correct
-  * Update changelog header for current release
-  * Commit
-* Release: `npx release-it`
-* Update GitHub Release with changelog contents
-* Merge `beta` into `master` branch
-
-```
-git checkout master
-git merge origin/beta
-git push origin master
-```
-
-## Subsequent Beta Release
-
-* Checkout the `beta` branch
-
-```
-git fetch origin
-git checkout -B beta --track origin/beta
-```
-
-* Ensure you have the correct dependencies
-
-```
-git clean -fdx
-yarn
-```
-
-* Update the CHANGELOG.md
-  * Run `node ./dev/changelog`
-  * Copy output into `CHANGELOG.md`
-  * Edit to make clearer for consumers (remove non-consumer facing entries, etc)
-  * Ensure blueprint change diff URLs are correct
-  * Update changelog header for current release
-  * Commit
-* Release: `npx release-it`
-* Update GitHub Release with changelog contents
-* Merge `beta` into `master` branch
-
-```
-git checkout master
-git merge origin/beta
-git push origin master
-```
+</details>

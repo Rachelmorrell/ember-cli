@@ -3,28 +3,27 @@
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
-const expect = require('../../chai').expect;
-const map = require('ember-cli-lodash-subset').map;
+const { expect } = require('chai');
 const MockUI = require('console-ui/mock');
-const MockAnalytics = require('../../helpers/mock-analytics');
-const Blueprint = require('../../../lib/models/blueprint');
+const Blueprint = require('@ember-tooling/blueprint-model');
 const Project = require('../../../lib/models/project');
 const Task = require('../../../lib/models/task');
 const InitCommand = require('../../../lib/commands/init');
 const MockCLI = require('../../helpers/mock-cli');
 const td = require('testdouble');
 
+const { DEPRECATIONS } = require('../../../lib/debug');
+const { isExperimentEnabled } = require('@ember-tooling/blueprint-model/utilities/experiments');
+
 describe('init command', function () {
-  let ui, analytics, tasks, command, workingDir;
+  let ui, tasks, command, workingDir;
 
   beforeEach(function () {
     ui = new MockUI();
-    analytics = new MockAnalytics();
     tasks = {
-      GenerateFromBlueprint: Task.extend({}),
-      InstallBlueprint: Task.extend({}),
-      NpmInstall: Task.extend({}),
-      BowerInstall: Task.extend({}),
+      GenerateFromBlueprint: class extends Task {},
+      InstallBlueprint: class extends Task {},
+      NpmInstall: class extends Task {},
     };
 
     let tmpDir = os.tmpdir();
@@ -41,7 +40,6 @@ describe('init command', function () {
     let cli = new MockCLI({ ui });
     let options = {
       ui,
-      analytics,
       project: new Project(process.cwd(), projectOpts || { name: 'some-random-name' }, ui, cli),
       tasks,
       settings: {},
@@ -69,12 +67,12 @@ describe('init command', function () {
   });
 
   it('Uses the name of the closest project to when calling installBlueprint', function () {
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.rawName).to.equal('some-random-name');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 
@@ -84,12 +82,12 @@ describe('init command', function () {
   });
 
   it('Uses the provided app name over the closest found project', function () {
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.rawName).to.equal('provided-name');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 
@@ -106,12 +104,12 @@ describe('init command', function () {
 
     process.chdir(workingDir);
 
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.rawName).to.equal(path.basename(process.cwd()));
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand({ name: path.basename(process.cwd()) });
 
@@ -126,12 +124,12 @@ describe('init command', function () {
   });
 
   it("doesn't use --dry-run or any other command option as the name", function () {
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.rawName).to.equal('some-random-name');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 
@@ -140,13 +138,21 @@ describe('init command', function () {
     });
   });
 
+  // FIXME: This test is wrong.
+  // This behavior only works because "." is passed as a target file
+  // to the app blueprint, which in turn fails to create files
   it("doesn't use . as the name", function () {
-    tasks.InstallBlueprint = Task.extend({
+    if (DEPRECATIONS.INIT_TARGET_FILES.isRemoved || isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.rawName).to.equal('some-random-name');
+        expect(blueprintOpts.rawArgs).to.equal('.'); // <-- this is wrong
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 
@@ -156,12 +162,12 @@ describe('init command', function () {
   });
 
   it('Uses the "app" blueprint by default', function () {
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.blueprint).to.equal('app');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 
@@ -171,12 +177,16 @@ describe('init command', function () {
   });
 
   it('Uses arguments to select files to init', function () {
-    tasks.InstallBlueprint = Task.extend({
+    if (DEPRECATIONS.INIT_TARGET_FILES.isRemoved || isExperimentEnabled('VITE')) {
+      this.skip();
+    }
+
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.blueprint).to.equal('app');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 
@@ -186,12 +196,12 @@ describe('init command', function () {
   });
 
   it('Uses the "addon" blueprint for addons', function () {
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts.blueprint).to.equal('addon');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand({ keywords: ['ember-addon'], name: 'some-random-name' });
 
@@ -209,17 +219,17 @@ describe('init command', function () {
     buildCommand();
 
     command.beforeRun(['app']);
-    expect(map(command.availableOptions, 'name')).to.contain('custom-blueprint-option');
+    expect(command.availableOptions.map(({ name }) => name)).to.contain('custom-blueprint-option');
   });
 
   it('Passes command options through to the install blueprint task', function () {
-    tasks.InstallBlueprint = Task.extend({
+    tasks.InstallBlueprint = class extends Task {
       run(blueprintOpts) {
         expect(blueprintOpts).to.contain.keys('customOption');
         expect(blueprintOpts.customOption).to.equal('customValue');
         return Promise.reject('Called run');
-      },
-    });
+      }
+    };
 
     buildCommand();
 

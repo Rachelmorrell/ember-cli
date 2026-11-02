@@ -1,37 +1,23 @@
 'use strict';
 
+const path = require('path');
 const captureExit = require('capture-exit');
 captureExit.captureExit();
 
-const chaiJestSnapshot = require('chai-jest-snapshot');
-const glob = require('glob');
+const { globSync } = require('glob');
 const Mocha = require('mocha');
-const fs = require('fs-extra');
-const expect = require('./chai').expect;
+const mochaConfig = require(path.join(__dirname, '../.mocharc'));
 
-if (process.env.EOLNEWLINE) {
-  require('os').EOL = '\n';
-}
+require('./bootstrap');
 
-fs.removeSync('.deps-tmp');
+const { expect } = require('chai');
+
+const mocha = new Mocha(mochaConfig);
 
 let root = 'tests/{unit,integration,acceptance}';
 let optionOrFile = process.argv[2];
 // default to `tap` reporter in CI otherwise default to `spec`
-let isCI = process.env.CI || process.env.GITHUB_ACTIONS;
-let reporter = process.env.MOCHA_REPORTER || (isCI ? 'tap' : 'spec');
-let mocha = new Mocha({
-  timeout: 5000,
-  reporter,
-  retries: 2,
-  rootHooks: {
-    beforeEach() {
-      chaiJestSnapshot.resetSnapshotRegistry();
-      chaiJestSnapshot.configureUsingMochaContext(this);
-    },
-  },
-});
-let testFiles = glob.sync(`${root}/**/*-test.js`);
+let testFiles = globSync(`${root}/**/*-test.js`).sort();
 let docsLintPosition = testFiles.indexOf('tests/unit/docs-lint-test.js');
 let docsLint = testFiles.splice(docsLintPosition, 1);
 
@@ -51,12 +37,16 @@ if (optionOrFile === 'all') {
 }
 
 function addFiles(mocha, files) {
-  files = typeof files === 'string' ? glob.sync(root + files) : files;
+  files = typeof files === 'string' ? globSync(root + files) : files;
   files.forEach(mocha.addFile.bind(mocha));
 }
 
 function runMocha() {
   let ROOT = process.cwd();
+
+  /* SilentErrors are used to avoid unhelpful stack traces to users but they can hide the source of test failures in
+  reporter output */
+  process.env.SILENT_ERROR = 'verbose';
 
   // ensure that at the end of every test, we are in the correct current
   // working directory
@@ -68,7 +58,7 @@ function runMocha() {
   mocha.run((failures) => {
     console.timeEnd('Mocha Tests Running Time');
 
-    // eslint-disable-next-line no-process-exit
+    // eslint-disable-next-line n/no-process-exit
     process.exit(failures);
   });
 }
@@ -79,6 +69,6 @@ Promise.resolve()
     console.error(error);
     console.error(error.stack);
 
-    // eslint-disable-next-line no-process-exit
+    // eslint-disable-next-line n/no-process-exit
     process.exit(1);
   });

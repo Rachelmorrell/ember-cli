@@ -2,12 +2,12 @@
 
 const stew = require('broccoli-stew');
 const Funnel = require('broccoli-funnel');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const DefaultPackager = require('../../../../lib/broccoli/default-packager');
 const broccoliTestHelper = require('broccoli-test-helper');
 const defaultPackagerHelpers = require('../../../helpers/default-packager');
 
-const buildOutput = broccoliTestHelper.buildOutput;
+const createBuilder = broccoliTestHelper.createBuilder;
 const createTempDir = broccoliTestHelper.createTempDir;
 const setupRegistryFor = defaultPackagerHelpers.setupRegistryFor;
 
@@ -18,7 +18,6 @@ describe('Default Packager: Tests', function () {
 
   let TESTS = {
     'addon-tree-output': {},
-    bower_components: {},
     'the-best-app-ever': {
       'router.js': 'router.js',
       'app.js': 'app.js',
@@ -154,7 +153,8 @@ describe('Default Packager: Tests', function () {
 
     expect(defaultPackager._cachedTests).to.equal(null);
 
-    output = await buildOutput(defaultPackager.packageTests(input.path()));
+    output = createBuilder(defaultPackager.packageTests(input.path()));
+    await output.build();
 
     expect(defaultPackager._cachedTests).to.not.equal(null);
   });
@@ -183,7 +183,8 @@ describe('Default Packager: Tests', function () {
       registry: setupRegistryFor('js', (tree) => tree),
     });
 
-    output = await buildOutput(defaultPackager.packageTests(input.path()));
+    output = createBuilder(defaultPackager.packageTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -231,7 +232,8 @@ describe('Default Packager: Tests', function () {
       registry: setupRegistryFor('js', (tree) => tree),
     });
 
-    output = await buildOutput(defaultPackager.packageTests(input.path()));
+    output = createBuilder(defaultPackager.packageTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -279,7 +281,8 @@ describe('Default Packager: Tests', function () {
       }),
     });
 
-    output = await buildOutput(defaultPackager.processTests(input.path()));
+    output = createBuilder(defaultPackager.processTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -354,7 +357,8 @@ describe('Default Packager: Tests', function () {
       }),
     });
 
-    output = await buildOutput(defaultPackager.processTests(input.path()));
+    output = createBuilder(defaultPackager.processTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -403,7 +407,6 @@ describe('Default Packager: Tests', function () {
     let emptyInput = await createTempDir();
     let emptyTestFolder = {
       'addon-tree-output': {},
-      bower_components: {},
       'the-best-app-ever': {
         'router.js': 'router.js',
         'app.js': 'app.js',
@@ -474,7 +477,8 @@ describe('Default Packager: Tests', function () {
       registry: setupRegistryFor('js', (tree) => tree),
     });
 
-    output = await buildOutput(defaultPackager.packageTests(input.path()));
+    output = createBuilder(defaultPackager.packageTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -516,7 +520,8 @@ describe('Default Packager: Tests', function () {
       registry: setupRegistryFor('js', (tree) => tree),
     });
 
-    output = await buildOutput(defaultPackager.packageTests(input.path()));
+    output = createBuilder(defaultPackager.packageTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 
@@ -549,7 +554,8 @@ describe('Default Packager: Tests', function () {
       registry: setupRegistryFor('js', (tree) => tree),
     });
 
-    output = await buildOutput(defaultPackager.packageTests(input.path()));
+    output = createBuilder(defaultPackager.packageTests(input.path()));
+    await output.build();
 
     let outputFiles = output.read();
 

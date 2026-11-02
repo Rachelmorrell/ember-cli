@@ -1,6 +1,6 @@
 'use strict';
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const TestsServerAddon = require('../../../../../lib/tasks/server/middleware/tests-server');
 
 describe('TestServerAddon', function () {
@@ -55,26 +55,6 @@ describe('TestServerAddon', function () {
         finally() {
           try {
             expect(nextWasCalled).to.true;
-            done();
-          } catch (e) {
-            done(e);
-          }
-        },
-      });
-    });
-
-    it('allows baseURL containing `+` character', function (done) {
-      mockRequest.path = '/braden/+/tests/any-old-file';
-      mockRequest.headers.accept = ['*/*'];
-      addon.serverMiddleware({
-        app,
-        options: {
-          watcher: Promise.resolve({ directory: 'nothing' }),
-          baseURL: '/braden/+',
-        },
-        finally() {
-          try {
-            expect(mockRequest.url).to.equal('/braden/+/tests/index.html');
             done();
           } catch (e) {
             done(e);

@@ -3,16 +3,20 @@
 ![embercli architecture](./assets/architecture/Ember-CLI%20architecture.png)
 
 ## Overview
+
 - **cli** parses args and calls the respective **command**
 - **command** calls a sequence of **tasks**
 - **tasks** do the actual work
 
 ## The different components of ember-cli
+
 ### cli()
+
 cli is a small function that gets everything going.
 
 Usage:
-``` JavaScript
+
+```JavaScript
 let cli = require('./cli');
 
 cli({
@@ -24,6 +28,7 @@ cli({
 ```
 
 ## UI
+
 In ember-cli we pass a `UI` instance around. Instead of calling
 `console.log` or writing things directly to `process.stdout` we access
 those through this wrapper. This makes our code testing friendly
@@ -43,17 +48,18 @@ text input.
 stream. Also nice for testing, e.g. simulating input.
 
 ### Commands
+
 Located in `lib/commands/`. They get picked up by `requireAsHash()`
 automatically.
 
 The CLI constructs command instances with dependencies including ui,
-analytics, commands, project, etc. The plan is for these to eventually
+commands, project, etc. The plan is for these to eventually
 be constructed and wired up via a dependency injection container.
 
 The following file structure is expected (Demonstrated on the imaginary
 command `develop-ember-cli`):
 
-``` JavaScript
+```JavaScript
 // e.g. commands/develop-ember-cli.js
 
 let Command = require('../models/command');
@@ -108,12 +114,12 @@ The promise returned by `run()` should either
 - resolve to `undefined`
 - reject with an `Error` instance if the error is unhandled
 - or reject with `undefined` if it was handled. In this case the command
-should log something via the `ui` first.
+  should log something via the `ui` first.
 
 `requireAsHash()` assembles from the files in `commands/` a hash that looks
 like this:
 
-``` JavaScript
+```JavaScript
 {
   DevelopEmberCLI: require('commands/develop-ember-cli'),
   ...
@@ -121,6 +127,7 @@ like this:
 ```
 
 #### Usage instructions formatting
+
 ```
 ember serve <arg-option (Default: something)>
   --port (Default: 4200) Description 1
@@ -128,6 +135,7 @@ ember serve <arg-option (Default: something)>
 ```
 
 ##### Formatting colors
+
 - white: `ember serve`
 - yellow: `<arg-option `, `>`
 - cyan: `--port`, `--important-option`
@@ -136,44 +144,49 @@ ember serve <arg-option (Default: something)>
 - cyan: `(Required)`
 
 ### Tasks
+
 Located in `lib/tasks`. They get picked up by `requireAsHash()` automatically.
 
-Tasks do the real work. They should also do only one thing: For example there
-are separate `bower-install` and `npm-install` tasks, not just one unified
-`install` task. And they should not call other tasks: For example
-`install-blueprint` shouldn't call `npm-install` directly. That's because the
-task sequence is determined by the command and thus should be declared there.
+Tasks do the real work. They should also do only one thing and they should not
+call other tasks: For example `install-blueprint` shouldn't call `npm-install`
+directly. That's because the task sequence is determined by the command and thus
+should be declared there.
 
 The command constructs task instances with dependencies including ui,
-analytics, project, etc. The plan is for these to eventually
+project, etc. The plan is for these to eventually
 be constructed and wired up via a dependency injection container.
 
 A task's `run` method has to return a promise which resolves or rejects
 depending on whether it ran through successfully or not.
 
 The promise of a task should either
+
 - fulfill to `undefined`
 - reject with an `Error` instance if the error is unhandled
 - or reject with `undefined` if it was handled. In this case the task should
-log something via the `ui` first.
+  log something via the `ui` first.
 
 So, tasks don't have a return value per design.
 
 The file format of a task looks like this:
-``` JavaScript
-// tasks/npm-install.js
 
-let Task = require('../task');
+```JavaScript
+// ./lib/tasks/npm-install.js
 
-module.exports = Task.extend({
-  run(options) {
+'use strict';
+
+const Task = require('../models/task');
+
+module.exports = class NpmInstallTask extends Task {
+  run(/* options */) {
     // return promise
   }
-});
+};
 ```
 
 `requireAsHash()` assembles from the files in `tasks/` a hash that looks like this:
-``` JavaScript
+
+```JavaScript
 {
   NpmInstall: require('tasks/npm-install'),
   ...
@@ -181,6 +194,7 @@ module.exports = Task.extend({
 ```
 
 ## Style guide
+
 - Everything async (except require)
 - Short files
 - Tests, tests, tests
@@ -211,7 +225,8 @@ mandatory semicolons and other rules are omitted).
 ### Indentation
 
 #### Multi-line return statement
-``` JavaScript
+
+```JavaScript
 // Correct
 return someFunction(
     someArgument,
@@ -225,7 +240,7 @@ return someFunction(
 );
 ```
 
-``` JavaScript
+```JavaScript
 // Correct
 return returnsAPromise()
   .then(...)
@@ -237,9 +252,10 @@ return retursAPromise().then(...)
 ```
 
 ### Custom errors
+
 Custom error classes should end with the suffix "Error".
 
-``` JavaScript
+```JavaScript
 function CustomError() {
   this.stack = (new Error()).stack;
 }
@@ -250,12 +266,12 @@ CustomError.prototype.name = 'CustomError';
 
 Also a `message` property should be set: Either in the constructor or as a property on `CustomError.prototype`.
 
-
 ### Dependencies
+
 When requiring modules, we should be aware of their effect on startup
 time. If they introduce a noticeable penalty, and are not needed except
 for some task/command we should require them lazily. Obviously a few
-small modules won't make a difference, but eagerly requiring npm + bower
+small modules won't make a difference, but eagerly requiring npm
 and all of lodash will add a second to startup time.
 
 The following example eagerly requires npm, but only truly requires it
@@ -263,16 +279,21 @@ when that task is invoked, not for `ember help` `ember version` or even
 `ember server`. This introduces a 200ms-300ms startup penalty.
 
 ```js
-let npm = require('npm');
+// ./lib/tasks/npm-install.js
 
-module.exports = Task.extend({
+"use strict";
+
+const npm = require("npm");
+const Task = require("../models/task");
+
+module.exports = class NpmInstallTask extends Task {
   run() {
-    npm.install() // or something
+    npm.install(); // or something
   }
-});
+};
 ```
 
-If a dependency (like bower or npm) turns out to have high startup cost,
+If a dependency (like npm) turns out to have high startup cost,
 we should require them lazily. This also allows us to inject
 alternative dependencies at construction time. Some future DI
 refactoring can likely automate this process.
@@ -280,17 +301,25 @@ refactoring can likely automate this process.
 example:
 
 ```js
-module.exports = Task.extend({
+// ./lib/tasks/npm-install.js
+
+"use strict";
+
+const Task = require("../models/task");
+
+module.exports = class NpmInstallTask extends Task {
   init() {
-    this.npm = this.npm || require('npm');
-  },
-  run() {
-    this.npm.install() // or something
+    this.npm = this.npm || require("npm");
   }
-});
+
+  run() {
+    this.npm.install(); // or something
+  }
+};
 ```
 
 ### Sync vs async
+
 Since [JavaScript uses an event loop](https://nodejs.org/about/), the use of
 blocking and compute intensive operations is discouraged. The general
 recommendation is to use asynchronous operations.

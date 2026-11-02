@@ -1,8 +1,8 @@
 'use strict';
 
-const printCommand = require('../../../lib/utilities/print-command');
+const printCommand = require('@ember-tooling/blueprint-model/utilities/print-command');
 const processHelpString = require('../../helpers/process-help-string');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const EOL = require('os').EOL;
 
 describe('printCommand', function () {
